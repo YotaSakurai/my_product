@@ -1,0 +1,9 @@
+Error[1225] C:\Users\youta\Desktop\ecorun\PIC\ll.c 14 : configuration value 'HSPLL_HS' not recognized for configuration setting 'FOSC'
+Error[1224] C:\Users\youta\Desktop\ecorun\PIC\ll.c 15 : configuration setting 'WDT' not recognized
+Error[1224] C:\Users\youta\Desktop\ecorun\PIC\ll.c 16 : configuration setting 'PLLDIV' not recognized
+Error[1225] C:\Users\youta\Desktop\ecorun\PIC\ll.c 17 : configuration value 'OSC1_PLL2' not recognized for configuration setting 'CPUDIV'
+Error[1224] C:\Users\youta\Desktop\ecorun\PIC\ll.c 18 : configuration setting 'PWRT' not recognized
+Error[1224] C:\Users\youta\Desktop\ecorun\PIC\ll.c 19 : configuration setting 'BOR' not recognized
+Error[1225] C:\Users\youta\Desktop\ecorun\PIC\ll.c 20 : configuration value '2' not recognized for configuration setting 'BORV'
+Error[1224] C:\Users\youta\Desktop\ecorun\PIC\ll.c 22 : configuration setting 'VREGEN' not recognized
+Error[1224] C:\Users\youta\Desktop\ecorun\PIC\ll.c 24 : configuration setting 'PBADEN' not recognized
