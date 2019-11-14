@@ -1,0 +1,268 @@
+/* 全体で共通のCSSはこのファイルに記述する */
+
+body{
+    background-color: #dadada;
+}
+
+.main.container{
+    margin-top: 30px;
+}
+/**/
+.box_with_shadow{
+    box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+    margin: 1rem 1rem;
+    padding: 1em;
+    border-radius: .28571429rem;
+    border: 1px solid rgba(34,36,38,.15);    
+}
+
+.flex_space_around{
+    justify-content: space-between;
+}
+.flex_space_center{
+    justify-content: center;
+}
+
+.flex_end{
+    justify-content: flex-end;
+}
+
+/* index -------------------------------------*/
+
+.ui.secondary.inverted.pointing.menu .menu_toggle_button{
+    display: none;
+}
+.ui.secondary.inverted.pointing.menu .invisible{
+    display: none !important;
+}
+.inline_block{
+    width:100%;
+}
+.inline_weight{
+    display: inline-block;
+
+}
+.inline_weight_value{
+    font-size: 1.5em;
+    width: 1.2em;
+    height: 30px;
+}
+.sub.header{
+    margin-top: 10px;
+}
+.flex{
+    display: flex;
+
+}
+
+.training_menu{
+    width: 33%
+}
+.menu1{
+
+}
+/* mode_choice ----------------------------*/
+.mode_place{
+    width: 40%;
+    text-align: center;
+}
+.mode_how_hard{
+    width: 27%;
+    text-align: center;
+}
+
+.mode_decide_button{
+    width: 27%;
+    text-align: center;
+}
+
+.mode_button_hover:hover{
+    background-color: rgba(90, 240,90, 0.3);
+    transition: background-color 0.5s ease-in-out; 
+
+}
+/* login or signup ---------------------------------------*/
+.login_header{
+    height: 50px;
+}
+.login_header img{
+    height: 100%;
+}
+.login_top_container{
+    height: 650px;
+    background-image: url(./img/gym_bg_gray.png);
+    background-size: cover;
+    z-index: -1;
+}
+.ui.grid.login_top_container{
+    margin:0;
+}
+
+.login_top_left_wrapper{
+}
+.login_top_theme{
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+}
+.login_top_theme img{
+    width: 140%;
+}
+.login_explanation_container{
+    height: 300px;
+    width: 100%;
+    background-color: #fff;
+    z-index: 1;
+    position: relative;
+    border: 1px #ededed solid;
+    border-collapse: collapse; 
+}
+.login_explanation_wrapper_top{
+    width: 840px;
+    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+}
+.login_explanation_wrapper{
+    width: 800px;
+    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+}
+.login_explanation_title{
+
+}
+.login_explanation_title h1{
+    width: 100%;
+    margin: 0 auto;
+    font-style: bold;
+    text-align: center;
+}
+.login_explanation_title h3{
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+.login_explanation_wrapper h3{
+    width: 60%;
+    margin: 0 auto;
+}
+
+
+.login_explanation_wrapper p{
+    width: 100%;
+    margin: 0 auto;
+    font-size:18px;
+}
+
+i.icon.icon_step1{
+    font-size:60px;
+    margin: 20px 0 0 5px;
+}
+
+i.icon.week_icon{
+    font-size :25px;
+    margin: 5px 0 0 0;
+}
+
+/* training_detail ---------------------------------------------*/
+.ui .header h1{
+    text-align: center;
+}
+.ui .header h2{
+    text-align: center;
+}
+.training_explanation_container{
+    font-size: 1.2rem;
+    margin: 0 auto;
+}
+.video_container{
+    position:relative;
+    width:100%;
+    height:0;
+    padding-top:75%;
+}
+.video_frame{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+}
+/* record -----------------------------------*/
+#chart_div{
+    width: 100%;
+
+}
+
+.kaiwa {
+    margin-bottom: 25px;
+  }
+  /* 左画像 */
+  .kaiwa-img-left {
+    margin: 0;
+    float: left;
+    width: 60px;
+    height: 60px;
+    margin-right: -70px;
+}
+.kaiwa figure img {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #aaa;
+    border-radius: 50%;
+    margin: 0;
+}
+.kaiwa-text-right {
+    position: relative;
+    margin-left: 80px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #eee;
+    margin-right: 12%;
+    float: left;
+}
+.kaiwa-text-right:before {
+    position: absolute;
+    content: '';
+    border: 10px solid transparent;
+    top: 15px;
+    left: -20px;
+  }
+  .kaiwa-text-right:after {
+    position: absolute;
+    content: '';
+    border: 10px solid transparent;
+    border-right: 10px solid #eee;
+    top: 15px;
+    left: -19px;
+  }
+
+/*
+#chart_div div div{
+    width: 100%;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%,0);
+    overflow: hidden;
+}
+#chart_div div div div{
+    position:relative;
+    width:100%;
+    padding-top:56.25%;
+  }
+#chart_div div div div svg{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+  }
+
+*/

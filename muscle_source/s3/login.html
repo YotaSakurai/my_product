@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- 文字エンコードをUTF-8に指定 -->
+    <meta charset="utf-8">
+    <!-- レンダリングを最新に指定 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <!-- 拡大を禁止 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>ログイン</title>
+
+    <!-- Semantic UI を読み込む -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <!-- Vue.js を読み込む -->
+    <script src="https://unpkg.com/vue@2.3.3/dist/vue.js"></script>
+
+    <!-- 共通のCSSファイルを読み込む -->
+    <link rel="stylesheet" href="./common/style.css">
+    <link rel="stylesheet" href="./common/login.css">
+    <link rel="stylesheet" href="./common/responsive.css">
+  </head>
+  <body>
+    <!-- Vue.jsで読み込む -->
+    <div id="app">
+      <header class="login_header">
+        <img src="./common/img/login_header_fitnessmine_200.png" alt="">
+      </header>
+      <div class="ui grid login_top_container">
+        <div class="ui container six wide column login_top_left_wrapper">
+            <div class="login_top_theme">
+                <img src="./common/img/login_page_title.png" alt="">
+            </div>
+
+        </div>
+        <div class="ui main container six wide column">
+            <!-- 基本的なコンテンツはここに記載する -->
+    
+            <div class="ui segment">
+              <form class="ui form" v-on:submit.prevent="submit">
+                <div class="field">
+                  <div class="ui left icon input">
+                    <i class="user icon"></i>
+                    <input v-model="user.address" type="text" placeholder="メールアドレス">
+                  </div>
+                </div>
+    
+                <div class="field">
+                  <div class="ui left icon input">
+                    <i class="lock icon"></i>
+                    <input v-model="user.password" type="password" placeholder="Password">
+                  </div>
+                </div>
+    
+                <div class="field" v-if="mode =='signup'">
+                  <div class="ui left icon input">
+                    <i class="tag icon"></i>
+                    <input v-model="user.name" type="text" placeholder="名前">
+                  </div>
+                </div>
+    
+                <div class="field" v-if="mode =='signup'">
+                    <div class="ui left icon input">
+                      <i class="tag icon"></i>
+                      <input v-model="user.gender" type="text" placeholder="性別">
+                    </div>
+                </div>
+    
+                <div class="field" v-if="mode =='signup'">
+                  <div class="ui left icon input">
+                    <i class="calendar icon"></i>
+                    <input v-model="user.age" type="number" placeholder="Age">
+                  </div>
+                </div>
+    
+                <div class="field" v-if="mode =='signup'">
+                    <div class="ui left icon input">
+                      <i class="calendar icon"></i>
+                      <input v-model="user.height" type="number" placeholder="身長">
+                    </div>
+                </div>
+    
+                <div class="field" v-if="mode =='signup'">
+                    <div class="ui left icon input">
+                      <i class="calendar icon"></i>
+                      <input v-model="user.weight" type="number" placeholder="体重">
+                    </div>
+                </div>
+    
+                  <div class="field" v-if="mode =='signup'">
+                      <div class="ui left icon input">
+                        <i class="calendar icon"></i>
+                        <input v-model="user.g_weight" type="number" placeholder="目標体重">
+                      </div>
+                    </div>
+    
+                <button class="ui huge green fluid button" type="submit">
+                  {{ submitText }}
+                </button>
+              </form>
+    
+            </div>
+            <button class="ui large grey fluid button" v-on:click="toggleMode">
+              {{ toggleText }}
+            </button>
+          </div>
+      </div>
+
+      <div class="container login_explanation_container">
+        <div class="login_explanation_wrapper_top">
+          <div class="login_explanation_title">
+              <h1>始めるまでの流れ</h1>
+              <h3>初めての方は下の説明をご覧ください！</h3>
+          </div>
+        </div>
+      </div>
+      <div class="container login_explanation_container">
+        <div class="login_explanation_wrapper">
+          <div class="ui grid">
+              <div class="four wide column">
+                <h1>STEP1</h1>
+                <i class="edit outline icon icon_step1"></i>
+              </div>
+              <div class="twelve wide column">
+                <div>
+                  <h1>基本情報を入力する</h1>
+                  <p>まず、新規登録ボタンを押し、新規登録フォームを開いてください。</p>
+                  <p>次に、メールアドレスやパスワード、目標体重などをご入力ください。</p>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="container login_explanation_container">
+          <div class="login_explanation_wrapper">
+            <div class="ui grid">
+                <div class="four wide column">
+                  <h1>STEP2</h1>
+                  <i class="mouse pointer icon icon_step1"></i>
+                </div>
+                <div class="twelve wide column">
+                  <div>
+                    <h1>モードを選択する</h1>
+                    <p>画面上部にあるメニューから、モード選択タブをお選びください。</p>
+                    <p>次に、自宅かジムかなど、お客様に合う場所や目的をお選びいただくと、</p>
+                    <p>選択項目に合ったトレーニングメニューをお届けします</p>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="container login_explanation_container">
+          <div class="login_explanation_wrapper">
+            <div class="ui grid">
+                <div class="four wide column">
+                  <h1>STEP3</h1>
+                  <i class="child icon icon_step1"></i>
+                </div>
+                <div class="twelve wide column">
+                  <div>
+                    <h1>トレーニングを始める！</h1>
+                    <p>ホーム画面にトレーニングメニューが表示されます。</p>
+                    <p>そのトレーニングメニューに沿って、頑張りましょう！</p>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="container login_explanation_container">
+          <div class="login_explanation_wrapper">
+            <div class="ui grid">
+                <div class="four wide column">
+                  <h1>STEP4</h1>
+                  <i class="chart bar outline icon icon_step1"></i>
+                </div>
+                <div class="twelve wide column">
+                  <div>
+                    <h1>記録やトレーナーからのメッセージを確認する</h1>
+                    <p>画面上部にあるメニューから記録ページをお選びください。</p>
+                    <p>今までのトレーニング記録を確認できます</p>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+
+      
+
+      <!--<div class="ui main container">
+
+        <div class="ui segment">
+          <form class="ui form" v-on:submit.prevent="submit">
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="user icon"></i>
+                <input v-model="user.address" type="text" placeholder="ID">
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="lock icon"></i>
+                <input v-model="user.password" type="text" placeholder="Password">
+              </div>
+            </div>
+
+            <div class="field" v-if="mode =='signup'">
+              <div class="ui left icon input">
+                <i class="tag icon"></i>
+                <input v-model="user.name" type="text" placeholder="名前">
+              </div>
+            </div>
+
+            <div class="field" v-if="mode =='signup'">
+                <div class="ui left icon input">
+                  <i class="tag icon"></i>
+                  <input v-model="user.gender" type="text" placeholder="性別">
+                </div>
+            </div>
+
+            <div class="field" v-if="mode =='signup'">
+              <div class="ui left icon input">
+                <i class="calendar icon"></i>
+                <input v-model="user.age" type="text" placeholder="Age">
+              </div>
+            </div>
+
+            <div class="field" v-if="mode =='signup'">
+                <div class="ui left icon input">
+                  <i class="calendar icon"></i>
+                  <input v-model="user.height" type="text" placeholder="身長">
+                </div>
+            </div>
+
+            <div class="field" v-if="mode =='signup'">
+                <div class="ui left icon input">
+                  <i class="calendar icon"></i>
+                  <input v-model="user.weight" type="text" placeholder="体重">
+                </div>
+            </div>
+
+              <div class="field" v-if="mode =='signup'">
+                  <div class="ui left icon input">
+                    <i class="calendar icon"></i>
+                    <input v-model="user.g_weight" type="text" placeholder="目標体重">
+                  </div>
+                </div>
+
+            <button class="ui huge green fluid button" type="submit">
+              {{ submitText }}
+            </button>
+          </form>
+
+        </div>
+        <button class="ui large grey fluid button" v-on:click="toggleMode">
+          {{ toggleText }}
+        </button>
+      </div>-->
+
+    </div>
+
+    <!-- APIのURLを読み込むJavaScriptファイル -->
+    <script src="./common/config.js" charset="utf-8"></script>
+    
+    <!-- 各ページで使うJavaScriptファイルはこの行より下で読み込む -->
+    <script src="./js/login.js" charset="utf-8"></script>
+  </body>
+</html>
