@@ -11,5 +11,6 @@
             break;
         }
     }
-?> 
+?>
+
 <iflame width="480" height ht="360" src="https://www.youtube.com/embed/<?php echo htmlspecialchars($value->yt_videoId,  ENT_QUOTES, 'UTF-8') ?>" frameborder="0" allowfullscreen></iframe>
