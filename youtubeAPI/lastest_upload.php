@@ -1,5 +1,5 @@
 <?php 
-    $user = "UCNjTjd2-PMC8Oo_-dCEss7A"; //取得したいチャンネルID
+    $user = "UCNjTjd2-PMC8Oo_-dCEss7A"; //取得したいチャンネルID、これはおめシス
     $url = "https://www.youtube.com/feeds/videos/xml?channnel_id=".$user;
     $rss = file_get_contents($url);
     $rss = preg_replace("/<([^>]+?):(.+?)>/", "<$1_$2>", $rss);
