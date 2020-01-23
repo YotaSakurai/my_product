@@ -18,7 +18,6 @@
             break;
         }
     }
-
 ?> 
 <!DOCTYPE html>
 <html lang="ja">
