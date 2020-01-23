@@ -9,9 +9,11 @@
     $rss = file_get_contents($url);
     $rss = preg_replace("/<([^>]+?):(.+?)>/", "<$1_$2>", $rss);
     $rss = simplexml_load_string($rss, "SimpleXMLElement", LIBXML_NOCDATA);
+    $i = 0;
     foreach($rss->entry as $value){
         if ($value === 0){
-
+        echo $i;
+        $i++;
         }else{
             break;
         }
@@ -26,6 +28,7 @@
         </title>
     </head>
         <div class="latest_video">
+            指定したyoutube channelの最新動画
             <iframe
                 class="video lazy"
                 title="【バーチャル双子YouTuber】はじめまして！おめがシスターズです！【自己紹介】"
@@ -35,6 +38,7 @@
                 allowfullscreen
             ></iframe>
         </div>
-<!--<iflame width="480" height="360" src="https://www.youtube.com/embed/<?php echo htmlspecialchars($value->yt_videoId,  ENT_QUOTES, 'UTF-8') ?>" frameborder="0" allowfullscreen></iframe>-->
+    -----second iframe------
+    <iflame width="480" height="360" src="https://www.youtube.com/embed/<?php echo htmlspecialchars($value->yt_videoId,  ENT_QUOTES, 'UTF-8') ?>" frameborder="0" allowfullscreen></iframe>
 <!--<iflame width="480" height="360" src="https://www.youtube.com/" frameborder="0" ></iframe>
 -->
