@@ -1,4 +1,9 @@
 <?php 
+    $arrContextOptions=array(
+        "ssl"=>array(
+        "verify_peer"=>false,
+        "verify_peer_name"=>false,
+      ),);
     $user = "UCNjTjd2-PMC8Oo_-dCEss7A"; //取得したいチャンネルID、これはおめシス
     $url = "https://www.youtube.com/feeds/videos/xml?channnel_id=".$user;
     $rss = file_get_contents($url);
@@ -13,4 +18,23 @@
     }
 
 ?> 
-<iflame width="480" height="360" src="https://www.youtube.com/embed/<?php echo htmlspecialchars($value->yt_videoId,  ENT_QUOTES, 'UTF-8') ?>" frameborder="0" allowfullscreen></iframe>
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <title>
+            youtubeの最新動画を取得する
+        </title>
+    </head>
+        <div class="latest_video">
+            <iframe
+                class="video lazy"
+                title="【バーチャル双子YouTuber】はじめまして！おめがシスターズです！【自己紹介】"
+                data-src="https://www.youtube.com/embed/GgHx7ljXs08"
+                frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+            ></iframe>
+        </div>
+<!--<iflame width="480" height="360" src="https://www.youtube.com/embed/<?php echo htmlspecialchars($value->yt_videoId,  ENT_QUOTES, 'UTF-8') ?>" frameborder="0" allowfullscreen></iframe>-->
+<!--<iflame width="480" height="360" src="https://www.youtube.com/" frameborder="0" ></iframe>
+-->
