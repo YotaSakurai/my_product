@@ -4,7 +4,7 @@ $(function() {
     $.getJSON(
         'http://ajax.googleapis.com/ajax/services/feed/load?callback=?',
         {
-            //xxxxxxxを表示したいチャンネルidに置き換えてください。
+            //xxxxxxxを表示したいチャンネルidに置き換え
             q: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCNjTjd2-PMC8Oo_-dCEss7A',
             v: '1.0',
             num: 10 //取得数
