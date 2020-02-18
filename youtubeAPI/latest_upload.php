@@ -44,6 +44,7 @@
               echo "php<br>";
         ?> 
         <!-------second iframe------>
+        <!--youtubeのhttps通信が弾かれてできない-->
         <iflame 
             width="480" 
             height="360" 
