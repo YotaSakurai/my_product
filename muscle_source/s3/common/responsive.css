@@ -1,0 +1,106 @@
+
+/*loginのflexを横から縦にを変える　--------------------*/ 
+@media screen and (max-width:960px){
+
+.ui.grid.login_top_container{
+    flex-direction: column !important; 
+    height: 850px;
+
+}
+.ui.container.six.wide.column.login_top_left_wrapper{
+    height: 200px;
+}
+.login_top_theme img{
+    width: 100%;
+}
+.login_header{
+}
+.login_header img{
+    height: 100%;
+}
+
+.ui.container.six.wide.column{
+    width: 75% !important;
+    margin: 0 auto !important;
+}
+}
+
+/*  login.htmlの要素を画面に合わせて狭める　index.htmlの要素を横から縦積みに変える　-------------------------------*/
+@media screen and (max-width:840px){
+    
+    /*画面幅が781px以上の時*/
+.login_explanation_wrapper_top{
+    width: 100%;    
+}
+.login_explanation_wrapper{
+    width: 95%;
+
+}
+.login_explanation_wrapper h1{
+    font-size:20px;
+}
+.today_training_wrapper{
+    flex-direction: column;
+}
+.training_menu{
+    width: 95%;
+}
+i.icon.icon_step1{
+    margin: 20px 0 0 -5px;
+}
+.login_explanation_wrapper p{
+font-size: 1rem;
+}
+
+
+}
+/*
+@media screen and (max-width:768px){
+#chart_div div div div svg{
+    transform: scale(0.8);
+    }
+    
+}
+
+@media screen and (max-width:768px){
+
+}
+*/
+/* 今日のメニューのマージンを減らす*/
+@media screen and (max-width:680px){
+.week{
+    margin: 1rem 0;
+}
+}
+
+
+
+/* 　menuをたたむ-------------------------------*/
+@media screen and (max-width:480px){
+    
+    /*画面幅が781px以上の時*/
+.week{
+    padding: 0.2rem;
+}
+
+.ui.secondary.inverted.pointing.menu{
+    display: flex;
+    flex-direction:column; 
+}
+
+.ui.secondary.inverted.pointing.menu .menu_toggle_button{
+    display: inline;
+}
+/*
+.ui.secondary.inverted.pointing.menu .item.invisible{
+display: none;
+    }
+*/
+.ui.secondary.inverted.pointing.menu .item{
+margin-left: 0;
+width: 100%;
+}
+
+
+}
+    

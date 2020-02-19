@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- 文字エンコードをUTF-8に指定 -->
+    <meta charset="utf-8">
+    <!-- レンダリングを最新に指定 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <!-- 拡大を禁止 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>メニュー詳細説明</title>
+
+    <!-- Semantic UI を読み込む -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <!-- Vue.js を読み込む -->
+    <script src="https://unpkg.com/vue@2.3.3/dist/vue.js"></script>
+
+    <!-- 共通のCSSファイルを読み込む -->
+    <link rel="stylesheet" href="./common/style.css">
+  </head>
+  <body>
+    <!-- Vue.jsで読み込む -->
+    <div id="app">
+        <common-menu current="home"></common-menu>
+
+      <div class="ui main container">
+        <!-- 基本的なコンテンツはここに記載する -->
+        <div class="ui segment">
+          <div class="ui header">
+            <h1>メニュー詳細</h1>
+          </div>
+          <div class="sub header">
+
+          </div>
+        </div>
+        <div class="ui segment">
+            <div class="ui header">
+                <h2>
+                    <div class="content">
+                        メニュー名　{{selectMenu.menu5}}
+
+                    </div>
+                    
+                </h2>
+            </div>
+            <div>
+                <div class="training_explanation_container" v-if="selectMenu.menu5=='レッグエクステンション'">
+                    <p><ol><li>自分の脚の長さに合わせてマシンのパッドと背もたれの位置を調節する。膝の位置とマシンの回転軸の位置を一致させ、シートに座る。</li>
+                    <li>息を吐きながら脚を伸ばしていく。足首を曲げて行うと大腿四頭筋を収縮させやすい。フィニッシュポジションではつま先を立てるようにする。</li>
+                    <li>脚を十分に伸ばしたら息を吸いながら元の姿勢に戻る。</li>
+                    <li>2~3を繰り返す。</li></ol></p>
+                    
+                </div>
+                <div class="training_explanation_container" v-if="selectMenu.menu5=='バービー'">
+                        <p><ol><li>立っている状態から始める。</li>
+                        <li>しゃがみ手を地面に付ける。</li>
+                        <li>足で地面を蹴り足を後ろに伸ばす。(腕立て伏せのような体勢だが、足は開いても開かなくてもよい。)</li>
+                        <li>足を元に戻ししゃがんだ状態に戻る。（腕は伸ばしたまま）</li>
+                        <li>しゃがんだ状態から立ち上がる。同時にジャンプしたり、頭上で一回拍手するバージョンもあり、そちらは「バーピージャンプ」と呼ばれる。
+                            </li></ol></p>
+                        
+                </div>
+                <div class="video_container">
+                <iframe class="video_frame" width="560" height="315" src="https://www.youtube.com/embed/ZaT07OtS2z0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                </div>
+            </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- APIのURLを読み込むJavaScriptファイル -->
+    <script src="./common/config.js" charset="utf-8"></script>
+    <script src="./common/menu.js" charset="utf-8"></script>
+
+    <!-- 各ページで使うJavaScriptファイルはこの行より下で読み込む -->
+    <script src="./js/training_detail5.js" charset="utf-8"></script>
+  </body>
+</html>

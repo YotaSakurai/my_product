@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- 文字エンコードをUTF-8に指定 -->
+    <meta charset="utf-8">
+    <!-- レンダリングを最新に指定 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <!-- 拡大を禁止 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>食事コラム</title>
+
+    <!-- Semantic UI を読み込む -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <!-- Vue.js を読み込む -->
+    <script src="https://unpkg.com/vue@2.3.3/dist/vue.js"></script>
+
+    <!-- 共通のCSSファイルを読み込む -->
+    <link rel="stylesheet" href="./common/style.css">
+    <link rel="stylesheet" href="./common/responsive.css">
+  </head>
+  <body>
+    <!-- Vue.jsで読み込む -->
+    <div id="app">
+      <common-menu current="home"></common-menu>
+
+      <div class="ui main container">
+        <!-- 基本的なコンテンツはここに記載する -->
+        <div class="ui segment">
+          <h2 class="ui header">
+            <div class="content">
+              食育
+            </div>            
+          </h2>
+        </div>
+
+        <div class="ui segment">
+            <h2 class="ui header">
+              <div class="titleNumber">
+              1.栄養素について
+              </div>
+            </h2>
+            <div class="sub header">
+                <div class="inline_block">                    
+                    <div class="flex">
+                      <div class="training_menu menu1 box_with_shadow" v-on:click="get_training_menu(0)">
+                        <div>
+                          <h3>栄養素解説</h3>
+                          <img src="./common/img/colum_image.jpg" alt="図の名前">
+                        </div>
+                      </div>                    
+                      <div class="training_menu menu3 box_with_shadow">
+                          <div>
+                            <h3>解説</h3>
+                          </div>
+                          <div>
+                            栄養素には、3大栄養素と呼ばれる糖質・脂質・たんぱく質とそれにビタミン・ミネラルを加えて5大栄養素と呼ばれるものがあります。
+3大栄養素はカラダを動かすエネルギー源となりますが、スポーツをするにあたって5大栄養素それぞれに役割があり、どれも欠かせないものなので、これらの栄養素をバランス良く摂ることが大切です。
+栄養素は、基本的には「カラダを動かすエネルギーとなるもの」「カラダを作るもの」「カラダの調子を整えるもの」の3つに分けられます。
+前述したように、3大栄養素はエネルギー源になりますが、中でもたんぱく質は、筋肉や爪・髪・内臓・血液・骨などを作る働きもあります。アスリートにとっては最もカギとなる栄養素と言えます。
+                          </div>
+                      </div>
+                    </div>
+                </div>                 
+            </div>
+            <h2 class="ui header">
+                <div class="titleNumber">
+                2.食事について
+                </div>
+              </h2>
+              <div class="sub header">
+                  <div class="inline_block">                    
+                      <div class="flex">
+                        <div class="training_menu menu1 box_with_shadow" v-on:click="get_training_menu(0)">
+                          <div>
+                            <h3>運動前の食事</h3>
+                            <img src="./common/img/colum_image2.jpg" alt="図の名前">
+                          </div>
+                        </div>                    
+                        <div class="training_menu menu3 box_with_shadow">
+                            <div>
+                              <h3>解説</h3>
+                            </div>
+                            <div>
+                              経験したことがある人も多いと思いますが、満腹状態で運動してしまうと、消化不良で腹痛などの原因になります。食事後すぐに運動するのは避けましょう。
+                              ランニングやサイクリングなどの激しい運動をするときには、空腹のままだと運動中のエネルギー循環や、筋肉の回復をスムーズにいかなくなることがあります。また、最低限の糖分を摂取しなければ、貧血になるおそれも。                              
+                              運動する30分前は栄養価が高く消化吸収のよい果物や、ジュースなどがおすすめです。固形物は、運動までに消化が間に合わないので避けましょう。
+                              特におすすめなのは「バナナ」。バナナに含まれるカリウムには、筋肉の働きを調整する作用があります。（※1）朝食前に運動する人は、バナナを1本食べてからすることで、筋肉の強化と回復によい効果が期待できるでしょう。
+                            </div>
+                        </div>
+                      </div>
+                  </div>                 
+              </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- APIのURLを読み込むJavaScriptファイル -->
+    <script src="./common/config.js"></script>
+
+    <script src="./common/menu.js"></script>
+    <!-- 各ページで使うJavaScriptファイルはこの行より下で読み込む -->
+    <script src="./js/index.js" charset="utf-8"></script>
+  </body>
+</html>

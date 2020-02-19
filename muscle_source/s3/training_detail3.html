@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- 文字エンコードをUTF-8に指定 -->
+    <meta charset="utf-8">
+    <!-- レンダリングを最新に指定 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <!-- 拡大を禁止 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>メニュー詳細説明</title>
+
+    <!-- Semantic UI を読み込む -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <!-- Vue.js を読み込む -->
+    <script src="https://unpkg.com/vue@2.3.3/dist/vue.js"></script>
+
+    <!-- 共通のCSSファイルを読み込む -->
+    <link rel="stylesheet" href="./common/style.css">
+  </head>
+  <body>
+    <!-- Vue.jsで読み込む -->
+    <div id="app">
+        <common-menu current="home"></common-menu>
+
+      <div class="ui main container">
+        <!-- 基本的なコンテンツはここに記載する -->
+        <div class="ui segment">
+          <div class="ui header">
+            <h1>メニュー詳細</h1>
+          </div>
+          <div class="sub header">
+
+          </div>
+        </div>
+        <div class="ui segment">
+            <div class="ui header">
+                <h2>
+                    <div class="content">
+                        メニュー名　{{selectMenu.menu3}}
+
+                    </div>
+                    
+                </h2>
+            </div>
+            <div>
+                <div class="training_explanation_container" v-if="selectMenu.menu3=='アブドミナルクランチ'">
+                    <p><ol><li>マシンに深く座り肘が90度程度曲がるように調整しグリップを握る。</li>
+                    <li>状態を曲げながら腹筋を収縮させ、脚と胸を引き寄せる。</li>
+                    <li>身体を伸ばしきって負荷がぬけないように、ゆっくりとスタートポジションに戻る。</li>
+                    <li>1~3を繰り返す。</li></ol></p>
+                    
+                </div>
+                <div class="training_explanation_container" v-if="selectMenu.menu3=='腕立て'">
+                        <p><ol><li>腕を肩幅より、拳二つ分ほど外に開いて床につく</li>
+                        <li>足を伸ばして、つま先だけを床につけて腕とつま先で体を支える</li>
+                        <li>足から首まで一直線になるよう姿勢を整える</li>
+                        <li>目線は顔から1メートル先を見るように</li>
+                        <li>肘を曲げながらゆっくりと体を倒していく</li>
+                        <li>床につかない程度まで下げたら、そのまま1秒間キープ</li>
+                        <li>その後、地面を押し上げて元に戻す</li>
+                        <li>1~7を繰り返す</li></ol></p>
+                        
+                </div>
+                <div class="video_container">
+                <iframe class="video_frame" width="560" height="315" src="https://www.youtube.com/embed/ZaT07OtS2z0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                </div>
+            </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- APIのURLを読み込むJavaScriptファイル -->
+    <script src="./common/config.js" charset="utf-8"></script>
+    <script src="./common/menu.js" charset="utf-8"></script>
+
+    <!-- 各ページで使うJavaScriptファイルはこの行より下で読み込む -->
+    <script src="./js/training_detail3.js" charset="utf-8"></script>
+  </body>
+</html>
