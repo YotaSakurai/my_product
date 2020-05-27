@@ -1,0 +1,71 @@
+.hero {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hero__inner__bg {
+  width: 100%;
+  height: 100%;
+  background: url(../images/alpha/background.jpg) center no-repeat;
+  background-size: cover;
+  -webkit-filter: blur(5px);
+  filter: blur(5px);
+}
+
+@media screen and (max-width: 728px) and (min-width: 701px) {
+  .hero .logo {
+    font-size: 100px;
+  }
+
+  .hero .logo-sub {
+    margin-top: 1.8rem;
+  }
+}
+
+@media screen and (max-width: 413px) {
+  .hero .logo {
+    font-size: 50px;
+  }
+
+  .hero .logo-sub {
+    font-size: 20px;
+    margin-top: 1rem;
+  }
+}
+
+.links--alpha {
+  background: url(../images/alpha/albro.png) top center no-repeat,
+    linear-gradient(to left, #7995f7, #de7072);
+  min-height: 1000px;
+}
+@media screen and (max-width: 700px) {
+  .links--alpha {
+    padding: 40px;
+    background: linear-gradient(to left, #7995f7, #de7072);
+    min-height: auto;
+  }
+}
+
+.c-omega {
+  margin-top: 200px;
+  font-size: 0.1rem;
+  animation: omega-noise 4s linear infinite 2s;
+}
+
+.c-omega .c-omega__link {
+  text-decoration: none;
+}
+
+@media screen and (max-width: 64em) {
+  header .menu-icon {
+    color: rgba(0, 0, 0, 0.7);
+    border: solid 3px rgba(0, 0, 0, 0.2);
+  }
+}
+header a.drawer-menu-item {
+  color: #000;
+}
+header.scrolled a.drawer-menu-item {
+  color: #fff;
+}
