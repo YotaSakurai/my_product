@@ -1,4 +1,4 @@
-# branchのソースの参考サイトのURL
+# branchの説明，参考サイトのURL
 ### erc20test  
 (古いversion、現在はzeppelin-solidity/contractsが使用できないので変更の必要あり)  
 - [npmで](https://qiita.com/kyrieleison/items/a5c049097c165cd792bf)  
