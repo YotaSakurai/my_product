@@ -7,3 +7,8 @@
 最新バージョンでトークンを作成してる@openeppelin/contractを使用
 - [openzeppelin2.0対応後にトークン作成したサイト](https://qiita.com/sinsinpurin/items/e95f7e167b3116d29c68)
 - [古いバージョンから新しいバージョンに変更した際のエラーと解決方法がいくつかあるサイト](https://qiita.com/yanyansk/items/eb4f71a16302c321e16d)
+
+# truffleコマンド
+devlop起動: ./node_modules/.bin/truffle devlop  
+migrate: ./node_modules/.bin/truffle migrate  
+[参考サイト](https://stackoverflow.com/questions/38148521/truffle-command-not-found-after-installation)
