@@ -9,6 +9,6 @@
 - [古いバージョンから新しいバージョンに変更した際のエラーと解決方法がいくつかあるサイト](https://qiita.com/yanyansk/items/eb4f71a16302c321e16d)
 
 # truffleコマンド
-devlop起動: ./node_modules/.bin/truffle devlop
-migrate: ./node_modules/.bin/truffle migrate
+devlop起動: ./node_modules/.bin/truffle devlop  
+migrate: ./node_modules/.bin/truffle migrate  
 [参考サイト](https://stackoverflow.com/questions/38148521/truffle-command-not-found-after-installation)
