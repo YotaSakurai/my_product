@@ -1,4 +1,5 @@
 # branchの説明，参考サイトのURL
+windows環境
 ### erc20test  
 古いバージョン、現在はzeppelin-solidity/contractsが使用できなかったり、関数の変更があるので適宜対応していく必要あり  
 - [npmで](https://qiita.com/kyrieleison/items/a5c049097c165cd792bf)  
