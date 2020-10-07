@@ -1,0 +1,30 @@
+<!doctype HTML>
+<body>
+  <h1>
+  ウォレット
+  </h1>
+  
+  <h2>
+  アカウント
+  </h2>
+  <p id="account">
+  0x
+  </p>
+  
+  <script>
+  // Javascript
+  window.addEventListener("load", () => {
+    console.log("load");
+    window.web3.eth.getAccounts((error, result) => {
+      console.log(error);
+      console.log(result);
+      
+      const account = result[0];
+      console.log(account);
+      
+      const p_account = document.getElementById("account");
+      p_account.innerText = account;
+    });
+  });
+  </script>
+</body>
