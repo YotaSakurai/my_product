@@ -1,0 +1,33 @@
+{
+  "name": "erc20-token-template",
+  "version": "1.0.0",
+  "description": "ERC20 token template truffle project",
+  "main": "index.js",
+  "scripts": {
+    "reset": "rm build/contracts/*",
+    "export-abi": "node scripts/export-abi.js",
+    "export-bytecode": "node scripts/export-bytecode.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hackers-live/erc20-token-template.git"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "erc20",
+    "cryptocurrency"
+  ],
+  "author": "Shun (shunsuke.hondo@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hackers-live/erc20-token-template/issues"
+  },
+  "homepage": "https://github.com/hackers-live/erc20-token-template#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.2.0",
+    "openzeppelin-solidity": "git+https://github.com/hackers-live/openzeppelin-solidity.git",
+    "solc": "^0.7.2",
+    "truffle-hdwallet-provider": "^1.0.5"
+  }
+}
