@@ -1,9 +1,11 @@
-pragma solidity ^0.5.4;
+pragma solidity ^0.6.0;
 
-//import "openzeppelin-solidity/contracts/token/ERC20/ERC20Capped.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-//import "@openzeppelin/contracts/token/ERC20/ERC20Capped.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20Capped.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20Snapshot.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20Pausable.sol";
 
 // 10 billion
 contract MyCoin is ERC20Capped(10000000000 ether) {
@@ -13,7 +15,7 @@ contract MyCoin is ERC20Capped(10000000000 ether) {
     address public CFO;
     address public CEO;
 
-    constructor () public {
+    constructor() public {
         CEO = msg.sender;
         CFO = msg.sender;
     }
@@ -29,18 +31,18 @@ contract MyCoin is ERC20Capped(10000000000 ether) {
         CFO = newCFO;
     }
 
-    function () payable external {
+    /*    function () payable external {
 
     }
-
+    */
     function withdrawEther() external {
         require(msg.sender == CFO || msg.sender == CEO);
         msg.sender.transfer(address(this).balance);
     }
-
+    /*
     function removeMinter(address account) external {
         require(msg.sender == CFO || msg.sender == CEO);
         _removeMinter(account);
     }
+*/
 }
-

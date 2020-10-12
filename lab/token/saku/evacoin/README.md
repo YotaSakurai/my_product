@@ -4,16 +4,15 @@ You can create and deploy your own token using this repository.
 
 ## Sample Token info
 
-![hackers_live_coin_logo](assets/logo500x500.png)
 
 | Key | Value |
 | ------------- | ------------- |
-| Name  | Hackers Live Coin  | 
+| Name  | Evaluate Coin (EVA)  | 
 | Symbol  | HCL |
 | Decimals  | 18 |
-| Address  | [0x6e2FE65d96ED63AAcA9e475F6f251D4232c3842c](https://etherscan.io/address/0x6e2FE65d96ED63AAcA9e475F6f251D4232c3842c) |
-| Cap  | 10 billion  |
-| Website | <https://www.youtube.com/channel/UCHGJRKiIJijt5u-Z3KkgG_w> |
+| Address  | [0xa613727dd1383dD8BDB6797F9A04532C5F8B8129](https://etherscan.io/address/0x6e2FE65d96ED63AAcA9e475F6f251D4232c3842c) |
+| Cap  | 100000  |
+| Website | <そのうち作る> |
 
 ## Prerequisites
 
