@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Token Wallet</title>
+</head>
+<body>
+
+  <div id="js-app">
+    <h1>{{ name }} Wallet</h1>
+    <p>あなたのアドレス: {{ defaultAccount }}</p>
+    <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
+    <p>
+       送金先: <br />
+       <input v-model="to" type="text" />
+    </p>
+    <script>
+        console.log('1111');
+    </script>
+    <p>
+      送る量: <br />
+      <input v-model="amount" type="number" />
+    </p>
+    <p>
+      <button @click="send">送金</button>
+    </p>
+    <p v-if="history">
+    Transaction history: <a :href="'https://ropsten.etherscan.io/tx/' + history">{{ history }}
+    </a>
+</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script>
+// web3関連のコード
+    window.addEventListener('load', function() {
+    console.log('loading page');
+    if (typeof web3 !== 'undefined') {
+        window.web3 = new Web3(web3.currentProvider);
+        console.log('web3 ropsten network');
+        onlyRopstenTestNetwork(main);
+    } else {
+        console.log('Please install metamask');
+        document.write("Please install metamask");
+        //document.write("Please install <a href="https://metamask.io/">MetaMask</a>")
+    }
+    })
+
+    function onlyRopstenTestNetwork(cb) {
+        web3.version.getNetwork(function(err, netId) {
+            if (netId === "3") {
+            cb();
+            } else {
+            document.write("Please switch MetaMask to Ropsten Test Network and reload page.");
+            }
+        });
+    }
+
+    var contractAddress = "0xD2fED57102Ee9d68cec41613985Cd8ed737BD748";
+    var abiArray = [
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "subtractedValue",
+				"type": "uint256"
+			}
+		],
+		"name": "decreaseAllowance",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "addedValue",
+				"type": "uint256"
+			}
+		],
+		"name": "increaseAllowance",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			}
+		],
+		"name": "allowance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "decimals",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "initialSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}];
+
+    function main() {
+    var defaultAccount = web3.eth.defaultAccount;
+    var contract = web3.eth.contract(abiArray).at(contractAddress);
+    contract.name(function(err, name){
+        if(err) throw err;
+        contract.symbol(function(err, symbol){
+        if(err) throw err;
+        contract.balanceOf(defaultAccount, function(err, balance){
+            if(err) throw err;
+            initializeApp(defaultAccount, contract, name, symbol, balance);
+        });
+        });
+    });
+    }
+
+    function initializeApp(defaultAccount, contract, name, symbol, balance) {
+    new Vue({
+        el: '#js-app',
+        data: {
+        defaultAccount: defaultAccount, // 選択されているEhtereumアカウント
+        name: name,                     // トークンの名前
+        symbol: symbol,                 // トークンのシンボル
+        balance: balance,               // トークンをいくら所持しているか
+        to: "",                         // 送金先アドレス
+        amount: 0,                      // 送金する量
+        history: ""                     // 送金トランザクションのハッシュ
+        },
+        methods: {
+        // 残高の表示を整形するメソッド
+        showBalance: function(balance) {
+            return (balance / 1e18).toFixed(2);
+        },
+        // 送金するメソッド
+        send: function() {
+            var $this = this;
+            var sendAmount = this.amount * 1e18;
+            contract.transfer(this.to, sendAmount, {from: defaultAccount}, function(err, txhash){
+            if (err) throw err;
+            $this.history = txhash;
+            contract.balanceOf(defaultAccount, function(err, balance){
+                $this.balance = balance;
+            });
+            });
+        }
+        }
+    })
+    }
+  console.log("end of script");
+
+  </script>
+  
+</body>
+</html>
