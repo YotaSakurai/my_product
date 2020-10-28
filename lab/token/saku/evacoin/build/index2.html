@@ -20,7 +20,10 @@
     </p>
     <p>
       <button @click="send">送金</button>
-    </p>
+	</p>
+	<p>
+		Transaction(hard): <a href="https://ropsten.etherscan.io/tx/0xfbf031925f512c4a9593b7f19080d9b91caf9e5443a2c020ad1b84a1f3e55a09">トランザクション</a>
+	</p>
     <p v-if="history">
     Transaction history: <a :href="'https://ropsten.etherscan.io/tx/' + history">{{ history }}
     </a>
@@ -463,10 +466,11 @@
         // 送金するメソッド
         send: function() {
             var $this = this;
-            var sendAmount = this.amount * 1e18;   //元はthis.amount * 1e18;
+            var sendAmount = this.amount * 1e18;
             contract.transfer(this.to, sendAmount, {from: defaultAccount}, function(err, txhash){
             if (err) throw err;
-            $this.history = txhash;
+			$this.history = txhash;
+			console.log(txhash);
             contract.balanceOf(defaultAccount, function(err, balance){
                 $this.balance = balance;
             });
