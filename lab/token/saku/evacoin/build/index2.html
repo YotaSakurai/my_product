@@ -37,8 +37,9 @@
     console.log('loading page');
     if (typeof web3 !== 'undefined') {
         window.web3 = new Web3(web3.currentProvider);
-        console.log('web3 ropsten network');
+        console.log('checking ropsten network');
         onlyRopstenTestNetwork(main);
+        console.log('finished checking network');
     } else {
         console.log('Please install metamask');
         document.write("Please install metamask");
@@ -48,6 +49,7 @@
 
     function onlyRopstenTestNetwork(cb) {
         web3.version.getNetwork(function(err, netId) {
+            console.log('onlyRopstenTestNetwork');
             if (netId === "3") {
             cb();
             } else {
@@ -373,6 +375,7 @@
 	}];
 
     function main() {
+        console.log("start main function");
     var defaultAccount = web3.eth.defaultAccount;
     var contract = web3.eth.contract(abiArray).at(contractAddress);
     contract.name(function(err, name){
@@ -385,7 +388,46 @@
         });
         });
     });
+    
+    startApp();
+
+    console.log('end of main function');
     }
+    console.log('start initializeApp function');
+
+
+    
+    function startApp(){
+        console.log('beginning of startApp');
+        web3.eth.getAccounts(function(error, accounts) {
+            console.log('start startApp function');
+            if (error) return;
+            let user_account = accounts[0];
+            console.log(user_account);
+            console.log(error);
+            if(typeof user_account !== 'undefined'){
+                console.log(user_account);
+                console.log("------------");
+                console.log(accounts);
+                getBalance(user_account);
+            }else{
+                console.log("ログインして下さい");
+            }
+        });
+    }
+    console.log('end of startApp function');
+ 
+//アドレスのETH量を取得
+    
+    function getBalance(_address){
+        console.log('start getBalance function');
+        web3.eth.getBalance(_address, (error, balance) => {
+                    if (error) return;
+                    console.log(JSON.stringify(balance, null, 2));
+                });
+        console.log('end of getBalance function');
+    }
+    
 
     function initializeApp(defaultAccount, contract, name, symbol, balance) {
     new Vue({
@@ -419,7 +461,8 @@
         }
     })
     }
-  console.log("end of script");
+    console.log('end initializeApp function');
+    console.log("end of script");
 
   </script>
   
