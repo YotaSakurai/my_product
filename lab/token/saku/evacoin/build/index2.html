@@ -28,43 +28,9 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
   <script>
-// web3関連のコード
-    window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
-        console.log('loading page');
-        if (typeof web3 !== 'undefined') {
-            window.web3 = new Web3(web3.currentProvider);
-			console.log('Web3: '+ web3.currentProvider.constructor.name);
-			web3 = new Web3(window.ethereum)		//https://stackoverflow.com/questions/56720654/how-to-get-an-account-address-from-metamask
-			console.log(web3);
-			window.ethereum.enable().catch(error => {
-				// User denied account access
-				console.log(error);
-			});
-
-			console.log("account[0]= %s", web3.eth.accounts[0]);
-            onlyRopstenTestNetwork(main);
-            console.log('finished checking network');
-        } else {
-            console.log('Please install metamask');
-            document.write("Please install metamask");
-            //document.write("Please install <a href="https://metamask.io/">MetaMask</a>")
-        }
-    })
-
-    function onlyRopstenTestNetwork(cb) {           //http://lotz84.hatenablog.com/entry/2017/12/13/081920
-        console.log('onlyRopstenTestNetwork');
-        web3.version.getNetwork(function(err, netId) {
-            if (netId === "3") {
-                console.log("netId= %s", netId);
-            cb();
-            } else {
-            document.write("Please switch MetaMask to Ropsten Test Network and reload page.");
-            }
-        });
-    }
-
-    var contractAddress = "0xD2fED57102Ee9d68cec41613985Cd8ed737BD748";
+	  var contractAddress = "0xD2fED57102Ee9d68cec41613985Cd8ed737BD748";
     var abiArray = [
 	{
 		"inputs": [],
@@ -379,6 +345,45 @@
 		"stateMutability": "view",
 		"type": "function"
 	}];
+  </script>
+
+  <script>
+// web3関連のコード
+    window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log('loading page');
+        if (typeof web3 !== 'undefined') {
+            window.web3 = new Web3(web3.currentProvider);
+			console.log('Web3: '+ web3.currentProvider.constructor.name);
+			web3 = new Web3(window.ethereum)		//https://stackoverflow.com/questions/56720654/how-to-get-an-account-address-from-metamask
+			console.log(web3);
+			window.ethereum.enable().catch(error => {
+				// User denied account access
+				console.log(error);
+			});
+
+			console.log("defaultAccount = %s", web3.eth.defaultAccount);
+            onlyRopstenTestNetwork(main);
+            console.log('finished checking network');
+        } else {
+            console.log('Please install metamask');
+            document.write("Please install metamask");
+            //document.write("Please install <a href="https://metamask.io/">MetaMask</a>")
+        }
+    })
+
+    function onlyRopstenTestNetwork(cb) {           //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log('onlyRopstenTestNetwork');
+        web3.version.getNetwork(function(err, netId) {
+            if (netId === "3") {
+                console.log("netId= %s", netId);
+            cb();
+            } else {
+            document.write("Please switch MetaMask to Ropsten Test Network and reload page.");
+            }
+        });
+    }
+
+    
 
 
     function startApp(){        //https://noumenon-th.net/programming/2018/06/24/getaccounts/
@@ -458,7 +463,7 @@
         // 送金するメソッド
         send: function() {
             var $this = this;
-            var sendAmount = this.amount;   //元はthis.amount * 1e18;
+            var sendAmount = this.amount * 1e18;   //元はthis.amount * 1e18;
             contract.transfer(this.to, sendAmount, {from: defaultAccount}, function(err, txhash){
             if (err) throw err;
             $this.history = txhash;
