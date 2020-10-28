@@ -14,9 +14,6 @@
        送金先: <br />
        <input v-model="to" type="text" />
     </p>
-    <script>
-        console.log('1111');
-    </script>
     <p>
       送る量: <br />
       <input v-model="amount" type="number" />
@@ -31,32 +28,9 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
   <script>
-// web3関連のコード
-    window.addEventListener('load', function() {
-    console.log('loading page');
-    if (typeof web3 !== 'undefined') {
-        window.web3 = new Web3(web3.currentProvider);
-        console.log('web3 ropsten network');
-        onlyRopstenTestNetwork(main);
-    } else {
-        console.log('Please install metamask');
-        document.write("Please install metamask");
-        //document.write("Please install <a href="https://metamask.io/">MetaMask</a>")
-    }
-    })
-
-    function onlyRopstenTestNetwork(cb) {
-        web3.version.getNetwork(function(err, netId) {
-            if (netId === "3") {
-            cb();
-            } else {
-            document.write("Please switch MetaMask to Ropsten Test Network and reload page.");
-            }
-        });
-    }
-
-    var contractAddress = "0xD2fED57102Ee9d68cec41613985Cd8ed737BD748";
+	  var contractAddress = "0xD2fED57102Ee9d68cec41613985Cd8ed737BD748";
     var abiArray = [
 	{
 		"inputs": [],
@@ -371,21 +345,103 @@
 		"stateMutability": "view",
 		"type": "function"
 	}];
+  </script>
 
-    function main() {
-    var defaultAccount = web3.eth.defaultAccount;
-    var contract = web3.eth.contract(abiArray).at(contractAddress);
-    contract.name(function(err, name){
-        if(err) throw err;
-        contract.symbol(function(err, symbol){
-        if(err) throw err;
-        contract.balanceOf(defaultAccount, function(err, balance){
-            if(err) throw err;
-            initializeApp(defaultAccount, contract, name, symbol, balance);
+  <script>
+// web3関連のコード
+    window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log('loading page');
+        if (typeof web3 !== 'undefined') {
+            window.web3 = new Web3(web3.currentProvider);
+			console.log('Web3: '+ web3.currentProvider.constructor.name);
+			web3 = new Web3(window.ethereum)		//https://stackoverflow.com/questions/56720654/how-to-get-an-account-address-from-metamask
+			console.log(web3);
+			window.ethereum.enable().catch(error => {
+				// User denied account access
+				console.log(error);
+			});
+
+			console.log("defaultAccount = %s", web3.eth.defaultAccount);
+            onlyRopstenTestNetwork(main);
+            console.log('finished checking network');
+        } else {
+            console.log('Please install metamask');
+            document.write("Please install metamask");
+            //document.write("Please install <a href="https://metamask.io/">MetaMask</a>")
+        }
+    })
+
+    function onlyRopstenTestNetwork(cb) {           //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log('onlyRopstenTestNetwork');
+        web3.version.getNetwork(function(err, netId) {
+            if (netId === "3") {
+                console.log("netId= %s", netId);
+            cb();
+            } else {
+            document.write("Please switch MetaMask to Ropsten Test Network and reload page.");
+            }
         });
-        });
-    });
     }
+
+    
+
+
+    function startApp(){        //https://noumenon-th.net/programming/2018/06/24/getaccounts/
+        console.log('beginning of startApp');
+        web3.eth.getAccounts(function(error, accounts) {
+            console.log('start getAccounts function');
+            if (error) return;
+            let user_account = accounts[0];
+            console.log("user_accuount[0]:".user_account);
+            if(typeof user_account !== 'undefined'){
+                console.log("user account not undefined");
+                console.log("------------");
+                console.log("accounts=".accounts);
+                let Balance = getBalance(user_account);
+                console.log("Balance:".Balance);
+            }else{
+                console.log("ログインして下さい");
+            }
+        });
+        console.log('end of startApp function');
+    }
+
+    function main() {       //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log("start main function");
+        var defaultAccount = web3.eth.defaultAccount;
+        var contract = web3.eth.contract(abiArray).at(contractAddress);
+        contract.name(function(err, name){
+            if(err) throw err;
+            contract.symbol(function(err, symbol){
+            if(err) throw err;
+            contract.balanceOf(defaultAccount, function(err, balance){
+                if(err) throw err;
+                initializeApp(defaultAccount, contract, name, symbol, balance);
+            });
+            });
+        });
+        
+        startApp();
+
+        console.log('end of main function');
+    }
+
+
+    
+    
+    
+ 
+//アドレスのETH量を取得
+    
+    function getBalance(_address){      //https://noumenon-th.net/programming/2018/06/24/getaccounts/
+        console.log('start getBalance function');
+        web3.eth.getBalance(_address, (error, balance) => {
+                    if (error) return;
+                    console.log(JSON.stringify(balance, null, 2));
+                });
+        console.log('end of getBalance function');
+    }
+    
 
     function initializeApp(defaultAccount, contract, name, symbol, balance) {
     new Vue({
@@ -407,7 +463,7 @@
         // 送金するメソッド
         send: function() {
             var $this = this;
-            var sendAmount = this.amount * 1e18;
+            var sendAmount = this.amount * 1e18;   //元はthis.amount * 1e18;
             contract.transfer(this.to, sendAmount, {from: defaultAccount}, function(err, txhash){
             if (err) throw err;
             $this.history = txhash;
@@ -418,8 +474,10 @@
         }
         }
     })
+    console.log('end initializeApp function');
     }
-  console.log("end of script");
+    
+    console.log("end of script");
 
   </script>
   
