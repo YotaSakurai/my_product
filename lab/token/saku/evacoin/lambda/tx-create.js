@@ -1,6 +1,6 @@
 var AWS = require("aws-sdk");
 var dynamo = new AWS.DynamoDB.DocumentClient();
-var tableName = "users";                 //DynamoDB
+var tableName = "txs";                 //DynamoDB
 
 exports.handler = (event, context, callback) => {
     var response = {
@@ -12,14 +12,19 @@ exports.handler = (event, context, callback) => {
     };
 
     var body = JSON.parse(event.body);
+    var timeStamp = Date.now();
 
     //TODO: DBに登録するための情報をparamオブジェクトとして宣言する（中身を記述）
     var param = {
         "TableName":tableName,
         "Item":{
-            "address":body.address,
-            "name":body.name,
-            "totalReceive":body.totalReceive
+            "txhash":body.txhash,
+            "FromAddress":body.FromAddress,
+            "FromName":body.FromName,
+            "Reason":body.Reason,
+            "TimeStamp":timeStamp,
+            "ToAddress":body.ToAddress,
+            "Toname":body.Toname
         }
     };
 
@@ -29,7 +34,6 @@ exports.handler = (event, context, callback) => {
             //TODO: 登録に失敗した場合の処理を記述
             response.statusCode = 500;
             response.body = JSON.stringify({"message":"error"});
-            console.log(err);
             callback(null,response);
             return;
         } else {
