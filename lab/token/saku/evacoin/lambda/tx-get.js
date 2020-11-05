@@ -3,7 +3,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient({
     region: "ap-northeast-1"
 });
 const tablename = "txs";
-
+/* 個人のトランザクションをすべて取得 */
 exports.handler = (event, context, callback) => {
     var response = {
         statusCode : 200,
