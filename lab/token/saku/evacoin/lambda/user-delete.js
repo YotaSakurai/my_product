@@ -1,5 +1,7 @@
 var AWS = require("aws-sdk");
-var dynamo = new AWS.DynamoDB.DocumentClient();
+var dynamo = new AWS.DynamoDB.DocumentClient({
+    region: "ap-northeast-1"
+});
 var tableName = "users";
 
 exports.handler = (event, context, callback) => {

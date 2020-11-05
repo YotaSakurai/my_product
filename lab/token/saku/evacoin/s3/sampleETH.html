@@ -17,7 +17,10 @@
     <p>
       送る量: <br />
       <input v-model="amount" type="number" />
-    </p>
+	</p>
+	<p>
+		<input  type="text">
+	</p>
     <p>
       <button @click="send">送金</button>
 	</p>
@@ -430,11 +433,16 @@
     }
 
 
-    
+	//tx-create api叩く用の関数
+	/*function txCreate(reason, amount, fromAddress, fromName, toAddress, toName, txHash){
+		var fromAddress = _address;
+		var txHash = txhash;
+
+	}*/
     
     
  
-//アドレスのETH量を取得
+	//アドレスのETH量を取得
     
     function getBalance(_address){      //https://noumenon-th.net/programming/2018/06/24/getaccounts/
         console.log('start getBalance function');
@@ -459,30 +467,39 @@
         history: ""                     // 送金トランザクションのハッシュ
         },
         methods: {
-        // 残高の表示を整形するメソッド
-        showBalance: function(balance) {
-            return (balance / 1e18).toFixed(2);
-        },
-        // 送金するメソッド
-        send: function() {
-            var $this = this;
-            var sendAmount = this.amount * 1e18;
-            contract.transfer(this.to, sendAmount, {from: defaultAccount}, function(err, txhash){
-            if (err) throw err;
-			$this.history = txhash;
-			console.log(txhash);
-            contract.balanceOf(defaultAccount, function(err, balance){
-                $this.balance = balance;
-            });
-            });
-        }
+            // 残高の表示を整形するメソッド
+            showBalance: function(balance) {
+                return (balance / 1e18).toFixed(2);
+            },
+            // 送金するメソッド
+            send: function() {
+                var $this = this;
+                var sendAmount = this.amount * 1e18;
+                contract.transfer(this.to, sendAmount, {from: defaultAccount}, function(err, txhash){
+                if (err) throw err;
+                $this.history = txhash;
+                console.log(txhash);
+                contract.balanceOf(defaultAccount, function(err, balance){
+                    $this.balance = balance;
+                });
+                });
+                //this.txCreate();
+            },
+            //txcreate apiを叩くメソッド
+            txCreate: function (reason, amount, fromAddress, fromName, toAddress, toName, txhash) {
+                
+            }
         }
     })
     console.log('end initializeApp function');
     }
-    
+    //送金後にtx-createのapiを叩く
     console.log("end of script");
 
+  </script>
+  <script>
+      console.log(497);
+  	console.log(txhash);
   </script>
   
 </body>
