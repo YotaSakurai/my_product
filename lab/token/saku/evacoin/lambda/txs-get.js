@@ -1,5 +1,7 @@
 var AWS = require("aws-sdk");
-var dynamo = new AWS.DynamoDB.DocumentClient();
+var dynamo = new AWS.DynamoDB.DocumentClient({
+    region: "ap-northeast-1"
+});
 var tablename = "txs";
 
 /* tx全件取得 */
@@ -13,7 +15,6 @@ exports.handler = (event, context, callback) => {
         body: JSON.stringify({"message" : ""})
     };
 
-    var txhash = event.queryStringParameters.txhash;
 
     var param = {
         "TableName": tablename
