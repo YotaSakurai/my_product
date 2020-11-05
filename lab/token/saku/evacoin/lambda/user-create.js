@@ -17,7 +17,6 @@ exports.handler = (event, context, callback) => {
     var param = {
         "TableName":tableName,
         "Item":{
-            "id":body.id,
             "address":body.address,
             "name":body.name,
             "totalReceive":body.totalReceive
@@ -30,6 +29,7 @@ exports.handler = (event, context, callback) => {
             //TODO: 登録に失敗した場合の処理を記述
             response.statusCode = 500;
             response.body = JSON.stringify({"message":"error"});
+            console.log(err);
             callback(null,response);
             return;
         } else {

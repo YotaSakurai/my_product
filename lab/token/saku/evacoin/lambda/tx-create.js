@@ -1,13 +1,6 @@
-/*-----------------------------
-送信データ：txhash, timestamp
-timestampは日本時間(ISO8601)
-
-
-------------------------------------*/
-
 var AWS = require("aws-sdk");
 var dynamo = new AWS.DynamoDB.DocumentClient();
-var tableName = "users";                 //DynamoDB
+var tableName = "txs";                 //DynamoDB
 
 exports.handler = (event, context, callback) => {
     var response = {
@@ -19,15 +12,19 @@ exports.handler = (event, context, callback) => {
     };
 
     var body = JSON.parse(event.body);
+    var timeStamp = Date.now();
 
     //TODO: DBに登録するための情報をparamオブジェクトとして宣言する（中身を記述）
     var param = {
         "TableName":tableName,
         "Item":{
-            "id":body.id,
-            "address":body.address,
-            "name":body.name,
-            "totalReceive":body.totalReceive
+            "txhash":body.txhash,
+            "FromAddress":body.FromAddress,
+            "FromName":body.FromName,
+            "Reason":body.Reason,
+            "TimeStamp":timeStamp,
+            "ToAddress":body.ToAddress,
+            "Toname":body.Toname
         }
     };
 
