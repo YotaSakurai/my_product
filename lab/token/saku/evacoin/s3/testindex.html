@@ -10,7 +10,32 @@
     <h1>{{ name }} Wallet</h1>
     <p>あなたのアドレス: {{ defaultAccount }}</p>
     <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
-    <p>今までに受け取ったEVTの総量: {{ totalReceive }}</p>
+    <p>今までに受け取ったEVTの総量: <!--{{ totalReceive }}--></p>
+
+	<p>
+		送金先: <br />
+		<input v-model="toAddress" type="text" />
+	 </p>
+	 <p>
+		宛名: <br />
+		<input v-model="toName" type="text">
+	 </p>
+	 <p>
+	   送る量: <br />
+	   <input v-model="amount" type="number" />
+	 </p>
+	 <p>
+		 送る理由: <br />
+		 <input  v-model="reason" type="text">
+		 <p>{{ reason }}</p>
+	 </p>
+	 <p>
+		 あなたの名前またはニックネーム: <br />
+		 <input v-model="fromName" type="text">
+	 </p>
+	 <p>
+	   <button @click="send">送金</button>
+	 </p>
 
     <p>あなたの取引履歴</p>
 	<p>
@@ -441,16 +466,18 @@
         name: name,                     // トークンの名前
         symbol: symbol,                 // トークンのシンボル
         balance: balance,               // トークンをいくら所持しているか
-        to: "",                         // 送金先アドレス
+        toAddress: "",                  // 送金先アドレス
         amount: 0,                      // 送金する量
-		history: "",                     // 送金トランザクションのハッシュ
-		reason:"",
+		history: "",                    // 送金トランザクションのハッシュ
+		reason:"",						// 送金理由
+		toName:"",						// 送信先の相手の名前
+		fromName:""						// 送り主の名前
         },
-        created() {
+        /*created() {
             axios.get('https://sample.com/wp-json/wp/v2/posts/').then(response => {
                 this.posts= response.data;
             })
-        },
+        },*/
         methods: {
         // 残高の表示を整形するメソッド
         showBalance: function(balance) {
@@ -460,7 +487,7 @@
         send: function() {
             var $this = this;
             var sendAmount = this.amount * 1e18;
-            contract.transfer(this.to, sendAmount, {from: defaultAccount}, function(err, txhash){
+            contract.transfer(this.toAddress, sendAmount, {from: defaultAccount}, function(err, txhash){
             if (err) throw err;
 			$this.history = txhash;
 			console.log(txhash);
@@ -468,7 +495,7 @@
                 $this.balance = balance;
             });
 			});
-			//this.txCreate();
+			//this.txCreate(this.reason, this.amount, defaultAccount, fromName, this.toAddress, toName, $this.history);
 		},
 		//txcreate apiを叩くメソッド
 		txGet: function (_address) {
