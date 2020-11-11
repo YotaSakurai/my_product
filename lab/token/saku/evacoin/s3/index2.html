@@ -12,8 +12,12 @@
     <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
     <p>
        送金先: <br />
-       <input v-model="to" type="text" />
-    </p>
+       <input v-model="toAddress" type="text" />
+	</p>
+	<p>
+		宛名: <br />
+		<input v-model="toName" type="text">
+	 </p>
     <p>
       送る量: <br />
 	  <input v-model="amount" type="number" />
@@ -23,20 +27,25 @@
 		<input  v-model="reason" type="text">
 		<p>{{ reason }}</p>
 	</p>
+	<p>
+		あなたの名前またはニックネーム: <br />
+		<input v-model="fromName" type="text">
+	</p>
     <p>
       <button @click="send">送金</button>
 	</p>
 	<p>
 		Transaction(hard): <a href="https://ropsten.etherscan.io/tx/0xfbf031925f512c4a9593b7f19080d9b91caf9e5443a2c020ad1b84a1f3e55a09">トランザクション</a>
 	</p>
-    <p v-if="history">
+    <p v-model="history">
     Transaction history: <a :href="'https://ropsten.etherscan.io/tx/' + history">{{ history }}
     </a>
 </p>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-
+  
+  
   <script>
 	  var contractAddress = "0xD2fED57102Ee9d68cec41613985Cd8ed737BD748";
     var abiArray = [
@@ -355,6 +364,8 @@
 	}];
   </script>
 
+  <!--<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
 // web3関連のコード
     window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
@@ -454,10 +465,13 @@
         name: name,                     // トークンの名前
         symbol: symbol,                 // トークンのシンボル
         balance: balance,               // トークンをいくら所持しているか
-        to: "",                         // 送金先アドレス
+        toAddress: "",                  // 送金先アドレス
         amount: 0,                      // 送金する量
-		history: "",                     // 送金トランザクションのハッシュ
-		reason:"",
+		history: "",                    // 送金トランザクションのハッシュ
+		reason:"",						// 送金理由
+		toName:"",						// 送信先の相手の名前
+		fromName:"",						// 送り主の名前
+		beforeHistory:""				// 1個前のトランザクション
         },
         methods: {
         // 残高の表示を整形するメソッド
@@ -467,8 +481,10 @@
         // 送金するメソッド
         send: function() {
             var $this = this;
-            var sendAmount = this.amount * 1e18;
-            contract.transfer(this.to, sendAmount, {from: defaultAccount}, function(err, txhash){
+			var sendAmount = this.amount * 1e18;
+			var set_interval_id = setInterval(findTargetElement, 3000);	//txhashが発行されるまでのインターバル設定
+
+            contract.transfer(this.toAddress, sendAmount, {from: defaultAccount}, function(err, txhash){
             if (err) throw err;
 			$this.history = txhash;
 			console.log(txhash);
@@ -476,14 +492,72 @@
                 $this.balance = balance;
             });
 			});
-			//this.txCreate();
+			console.log("this.reason:%s", this.reason);
+			console.log("sendAmount:%d", sendAmount);
+			console.log("this.amount:%d", this.amount);
+			console.log("defaultAccount:%s", defaultAccount);
+			console.log("this.fromName:%s", this.fromName);
+			console.log("this.toAddress:%s", this.toAddress);
+			console.log("this.toName:%s", this.toName);
+			console.log("this.history:%s", this.history);
+			this.txCreate(this.reason, sendAmount, defaultAccount, this.fromName, this.toAddress, this.toName, this.history);
 		},
 		//txcreate apiを叩くメソッド
 		txCreate: function (reason, amount, fromAddress, fromName, toAddress, toName, txhash) {
-			axios.post('https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction')
+			//const axios = require('axios');
+			/*axios.post('https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction',{
+			"txhash":txhash,
+            "FromAddress":fromAddress,
+            "FromName":fromName,
+			"Reason":reason,
+			"Amount":amount,
+            "ToAddress":toAddress,
+            "ToName":toName
+			})
+			.then(function(reponse){
+				console.log(respons.data);
+			})
                 
-            }
-        }
+			}*/
+			console.log("In txCreate, start fetch");
+			fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        "txhash":txhash,
+						"FromAddress":fromAddress,
+						"FromName":fromName,
+						"Reason":reason,
+						"Amount":amount,
+						"ToAddress":toAddress,
+						"ToName":toName
+                    })
+                })
+                    .then(function (response) {
+                        if (response.status == 200) {
+							console.log(response);
+                            return response.json();
+                        }
+                        // 200番以外のレスポンスはエラーを投げる
+                        return response.json().then(function (json) {
+                            throw new Error(json.message);
+                        });
+                    })
+                    .catch(function (err) {
+                        // レスポンスがエラーで返ってきたときの処理はここに記述する
+                        console.log("エラーが発生しました");
+
+                    });
+			}						
+		},
+		findTargetElement: function(){
+			var $this = this;
+			if(this.history){
+				if(this.history != this.beforeHistory){
+					clearInterval(set_interval_id);
+				}
+				
+			}
+		}
     })
     console.log('end initializeApp function');
     }
