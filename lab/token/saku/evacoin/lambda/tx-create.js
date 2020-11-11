@@ -24,6 +24,7 @@ exports.handler = (event, context, callback) => {
             "FromAddress":body.FromAddress,
             "FromName":body.FromName,
             "Reason":body.Reason,
+            "Amount":body.Amount,
             "TimeStamp":timeStamp,
             "ToAddress":body.ToAddress,
             "ToName":body.ToName

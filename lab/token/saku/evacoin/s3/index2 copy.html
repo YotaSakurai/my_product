@@ -476,11 +476,10 @@
                 $this.balance = balance;
             });
 			});
-			//this.txCreate();
+			this.txCreate(reason, amount, fromAddress, fromName, to, toName, $this.history);
 		},
 		//txcreate apiを叩くメソッド
 		txCreate: function (reason, amount, fromAddress, fromName, toAddress, toName, txhash) {
-			axios.post('https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction')
                 
             }
         }
