@@ -21,6 +21,7 @@
     <p>
       送る量: <br />
 	  <input v-model="amount" type="number" />
+	  <p>{{ amount }}</p>
 	</p>
 	<p>
 		送る理由:
@@ -475,87 +476,94 @@
         },
         methods: {
         // 残高の表示を整形するメソッド
-        showBalance: function(balance) {
-            return (balance / 1e18).toFixed(2);
-        },
-        // 送金するメソッド
-        send: function() {
-            var $this = this;
-			var sendAmount = this.amount * 1e18;
-			var set_interval_id = setInterval(findTargetElement, 3000);	//txhashが発行されるまでのインターバル設定
+			showBalance: function(balance) {
+				return (balance / 1e18).toFixed(2);
+			},
+			// 送金するメソッド
+			send: function() {
+				var $this = this;
+				var sendAmount = this.amount * 1e18;
+				var set_interval_id = setInterval(this.findTargetElement, 3000);	//txhashが発行されるまでのインターバル設定
 
-            contract.transfer(this.toAddress, sendAmount, {from: defaultAccount}, function(err, txhash){
-            if (err) throw err;
-			$this.history = txhash;
-			console.log(txhash);
-            contract.balanceOf(defaultAccount, function(err, balance){
-                $this.balance = balance;
-            });
-			});
-			console.log("this.reason:%s", this.reason);
-			console.log("sendAmount:%d", sendAmount);
-			console.log("this.amount:%d", this.amount);
-			console.log("defaultAccount:%s", defaultAccount);
-			console.log("this.fromName:%s", this.fromName);
-			console.log("this.toAddress:%s", this.toAddress);
-			console.log("this.toName:%s", this.toName);
-			console.log("this.history:%s", this.history);
-			this.txCreate(this.reason, sendAmount, defaultAccount, this.fromName, this.toAddress, this.toName, this.history);
-		},
-		//txcreate apiを叩くメソッド
-		txCreate: function (reason, amount, fromAddress, fromName, toAddress, toName, txhash) {
-			//const axios = require('axios');
-			/*axios.post('https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction',{
-			"txhash":txhash,
-            "FromAddress":fromAddress,
-            "FromName":fromName,
-			"Reason":reason,
-			"Amount":amount,
-            "ToAddress":toAddress,
-            "ToName":toName
-			})
-			.then(function(reponse){
-				console.log(respons.data);
-			})
-                
-			}*/
-			console.log("In txCreate, start fetch");
-			fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        "txhash":txhash,
+				contract.transfer(this.toAddress, sendAmount, {from: defaultAccount}, function(err, txhash){
+				if (err) throw err;
+				$this.history = txhash;
+				console.log(txhash);
+				contract.balanceOf(defaultAccount, function(err, balance){
+					$this.balance = balance;
+				});
+				});
+				console.log("this.reason:%s", this.reason);
+				console.log("this.sendAmount:%s", this.sendAmount);
+				console.log("this.amount:%s", this.amount);
+				console.log("defaultAccount:%s", this.defaultAccount);
+				console.log("this.fromName:%s", this.fromName);
+				console.log("this.toAddress:%s", this.toAddress);
+				console.log("this.toName:%s", this.toName);
+				console.log("this.history:%s", this.history);
+				//this.txCreate(this.reason, sendAmount, defaultAccount, this.fromName, this.toAddress, this.toName, this.history);
+				this.findTargetElement();
+			},
+			//txcreate apiを叩くメソッド
+			txCreate: function (reason, amount, fromAddress, fromName, toAddress, toName, txhash) {
+				//const axios = require('axios');
+				/*axios.post('https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction',{
+				"txhash":txhash,
+				"FromAddress":fromAddress,
+				"FromName":fromName,
+				"Reason":reason,
+				"Amount":amount,
+				"ToAddress":toAddress,
+				"ToName":toName
+				})
+				.then(function(reponse){
+					console.log(respons.data);
+				})
+					
+				}*/
+				console.log("In txCreate, start fetch");
+				fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
+					method: "POST",
+					body: JSON.stringify({
+						"txhash":txhash,
 						"FromAddress":fromAddress,
 						"FromName":fromName,
 						"Reason":reason,
 						"Amount":amount,
 						"ToAddress":toAddress,
 						"ToName":toName
-                    })
-                })
-                    .then(function (response) {
-                        if (response.status == 200) {
+					})
+				})
+					.then(function (response) {
+						if (response.status == 200) {
 							console.log(response);
-                            return response.json();
-                        }
-                        // 200番以外のレスポンスはエラーを投げる
-                        return response.json().then(function (json) {
-                            throw new Error(json.message);
-                        });
-                    })
-                    .catch(function (err) {
-                        // レスポンスがエラーで返ってきたときの処理はここに記述する
-                        console.log("エラーが発生しました");
+							return response.json();
+						}
+						// 200番以外のレスポンスはエラーを投げる
+						return response.json().then(function (json) {
+							throw new Error(json.message);
+						});
+					})
+					.catch(function (err) {
+						// レスポンスがエラーで返ってきたときの処理はここに記述する
+						console.log("エラーが発生しました");
 
-                    });
-			}						
-		},
-		findTargetElement: function(){
-			var $this = this;
-			if(this.history){
-				if(this.history != this.beforeHistory){
-					clearInterval(set_interval_id);
+					});	
+				console.log("finish fetch and txCreate")					
+			},
+			// txhashが発行されるまでの待ち用の関数
+			findTargetElement: function(){
+				var $this = this;			
+
+				if(this.history){
+					if(this.history != this.beforeHistory){
+						clearInterval(this.set_interval_id);
+						console.log("finish cleared clearInterval")
+						this.beforeHistory = this.history;
+						this.txCreate(this.reason, this.amount, this.defaultAccount, this.fromName, this.toAddress, this.toName, this.history);					
+					}
+					
 				}
-				
 			}
 		}
     })
