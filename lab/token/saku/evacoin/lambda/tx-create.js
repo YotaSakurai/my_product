@@ -2,7 +2,7 @@ var AWS = require("aws-sdk");
 var dynamo = new AWS.DynamoDB.DocumentClient({
     region: "ap-northeast-1"
 });
-var tableName = "txs";                 //DynamoDB
+var tableName = "transactions";                 //DynamoDB
 
 exports.handler = (event, context, callback) => {
     var response = {
@@ -37,6 +37,7 @@ exports.handler = (event, context, callback) => {
             //TODO: 登録に失敗した場合の処理を記述
             response.statusCode = 500;
             response.body = JSON.stringify({"message":"error"});
+            console.log("えらー = " + err);
             callback(null,response);
             return;
         } else {

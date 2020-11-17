@@ -141,10 +141,37 @@
                 //this.txCreate();
             },
             //txcreate apiを叩くメソッド
-            txGet: function (_address) {
-                    
-                }
-            },
+            txGete: function (defaultAccount) {
+				console.log("In txCreate, start fetch");
+				fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
+					method: "POST",
+					body: JSON.stringify({
+						"txhash":txhash,
+						"FromAddress":fromAddress,
+						"FromName":fromName,
+						"Reason":reason,
+						"Amount":amount,
+						"ToAddress":toAddress,
+						"ToName":toName
+					})
+				})
+					.then(function (response) {
+						if (response.status == 200) {
+							console.log(response);
+							return response.json();
+						}
+						// 200番以外のレスポンスはエラーを投げる
+						return response.json().then(function (json) {
+							throw new Error(json.message);
+						});
+					})
+					.catch(function (err) {
+						// レスポンスがエラーで返ってきたときの処理はここに記述する
+						console.log("エラーが発生しました");
+
+					});	
+				console.log("finish fetch and txCreate")					
+			}
             userGet: function (params) {
                 
             }

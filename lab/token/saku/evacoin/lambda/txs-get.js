@@ -26,13 +26,13 @@ exports.handler = (event, context, callback) => {
             response.body = JSON.stringify({
                 "message": "予期せぬエラーが発生したちょん"
             });
-            console.log(err);
+            console.log("エラー = " + err);
             callback(null, response);
             return;
         }
 
         response.body = JSON.stringify({
-            "txs": data.Items
+            "transactions": data.Items
         });
         callback(null, response);
     });
