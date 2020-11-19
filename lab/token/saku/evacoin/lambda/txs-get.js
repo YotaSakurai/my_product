@@ -2,7 +2,7 @@ var AWS = require("aws-sdk");
 var dynamo = new AWS.DynamoDB.DocumentClient({
     region: "ap-northeast-1"
 });
-var tablename = "txs";
+var tablename = "transactions";
 
 /* tx全件取得 */
 

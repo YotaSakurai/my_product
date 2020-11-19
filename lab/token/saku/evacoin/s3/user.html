@@ -141,10 +141,10 @@
                 //this.txCreate();
             },
             //txcreate apiを叩くメソッド
-            txGete: function (defaultAccount) {
+            txGet: function (defaultAccount) {
 				console.log("In txCreate, start fetch");
 				fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
-					method: "POST",
+					method: "GET",
 					body: JSON.stringify({
 						"txhash":txhash,
 						"FromAddress":fromAddress,

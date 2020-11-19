@@ -5,7 +5,7 @@ npm install @openzeppelin/contracts-ethereum-package
 
 [apiのtest](https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev)
 
-tx-get:scanで全件取得してフロント側でFromAddressでフィルター or scan後にFromAddress以外を削除
+tx-get:scanで全件取得してフロント側でFromAddressでフィルター or scan後にFromAddress以外を削除 or EtherscanのAPIから取得？？
 
 fin:
 txs-get
