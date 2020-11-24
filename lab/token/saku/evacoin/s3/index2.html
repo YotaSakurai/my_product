@@ -365,8 +365,7 @@
 	}];
   </script>
 
-  <!--<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  
   <script>
 // web3関連のコード
     window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
@@ -416,7 +415,7 @@
             if(typeof user_account !== 'undefined'){
                 console.log("user account not undefined");
                 console.log("------------");
-                console.log("accounts=".accounts);
+                console.log("accounts=" + accounts);
                 let Balance = getBalance(user_account);
                 console.log("Balance:".Balance);
             }else{
@@ -506,21 +505,7 @@
 			},
 			//txcreate apiを叩くメソッド
 			txCreate: function (reason, amount, fromAddress, fromName, toAddress, toName, txhash) {
-				//const axios = require('axios');
-				/*axios.post('https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction',{
-				"txhash":txhash,
-				"FromAddress":fromAddress,
-				"FromName":fromName,
-				"Reason":reason,
-				"Amount":amount,
-				"ToAddress":toAddress,
-				"ToName":toName
-				})
-				.then(function(reponse){
-					console.log(respons.data);
-				})
-					
-				}*/
+				
 				console.log("In txCreate, start fetch");
 				fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
 					method: "POST",

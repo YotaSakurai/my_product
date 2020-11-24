@@ -1,187 +1,551 @@
 <html>
-<head><title>user.html</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>マイページ</title>
+</head>
 <body>
 
 <p>マイページ</p>
-
-<h1>{{ name }} Wallet</h1>
-    <p>あなたのアドレス: {{ defaultAccount }}</p>
-    <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
-    <p>今までに受け取ったEVTの総量: <!--{{ totalReceive }}--></p>
-
+<div id="js-app">
+    <h1>{{ name }} Wallet</h1>
+        <p>あなたのアドレス: {{ defaultAccount }}</p>
+        <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
+        <p>今までに受け取ったEVTの総量: <!--{{ totalReceive }}--></p>
+</div>
+    
 <div>過去のトランザクション一覧</div>
 <div>一件目</div>
 
 <script>
-    // web3関連のコード
-        window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
-            console.log('loading page');
-            if (typeof web3 !== 'undefined') {
-                window.web3 = new Web3(web3.currentProvider);
-                console.log('Web3: '+ web3.currentProvider.constructor.name);
-                web3 = new Web3(window.ethereum)		//https://stackoverflow.com/questions/56720654/how-to-get-an-account-address-from-metamask
-                console.log(web3);
-                window.ethereum.enable().catch(error => {
-                    // User denied account access
-                    console.log(error);
-                });
-    
-                console.log("defaultAccount = %s", web3.eth.defaultAccount);
-                onlyRopstenTestNetwork(main);
-                console.log('finished checking network');
-            } else {
-                console.log('Please install metamask');
-                document.write("Please install metamask");
-                //document.write("Please install <a href="https://metamask.io/">MetaMask</a>")
-            }
-        })
-    
-        function onlyRopstenTestNetwork(cb) {           //http://lotz84.hatenablog.com/entry/2017/12/13/081920
-            console.log('onlyRopstenTestNetwork');
-            web3.version.getNetwork(function(err, netId) {
-                if (netId === "3") {
-                    console.log("netId= %s", netId);
-                cb();
-                } else {
-                document.write("Please switch MetaMask to Ropsten Test Network and reload page.");
-                }
-            });
-        }
-    
-        
-    
-    
-        function startApp(){        //https://noumenon-th.net/programming/2018/06/24/getaccounts/
-            console.log('beginning of startApp');
-            web3.eth.getAccounts(function(error, accounts) {
-                console.log('start getAccounts function');
-                if (error) return;
-                let user_account = accounts[0];
-                console.log("user_accuount[0]:".user_account);
-                if(typeof user_account !== 'undefined'){
-                    console.log("user account not undefined");
-                    console.log("------------");
-                    console.log("accounts=".accounts);
-                    let Balance = getBalance(user_account);
-                    console.log("Balance:".Balance);
-                }else{
-                    console.log("ログインして下さい");
-                }
-            });
-            console.log('end of startApp function');
-        }
-    
-        function main() {       //http://lotz84.hatenablog.com/entry/2017/12/13/081920
-            console.log("start main function");
-            var defaultAccount = web3.eth.defaultAccount;
-            var contract = web3.eth.contract(abiArray).at(contractAddress);
-            contract.name(function(err, name){
-                if(err) throw err;
-                contract.symbol(function(err, symbol){
-                if(err) throw err;
-                contract.balanceOf(defaultAccount, function(err, balance){
-                    if(err) throw err;
-                    initializeApp(defaultAccount, contract, name, symbol, balance);
-                });
-                });
-            });
-            
-            startApp();
-    
-            console.log('end of main function');
-        }
-         
-        //アドレスのETH量を取得
-        
-        function getBalance(_address){      //https://noumenon-th.net/programming/2018/06/24/getaccounts/
-            console.log('start getBalance function');
-            web3.eth.getBalance(_address, (error, balance) => {
-                        if (error) return;
-                        console.log(JSON.stringify(balance, null, 2));
+    /*var AWS = require('aws-sdk');
+    aws.config.region = 'ap-northeast-1';
+    var s3 = new AWS.S3();
+    var params = {
+        Bucket: 'sakulabbc.com',
+        Key: 'js/abi.js'
+    };*/
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<script>
+    var contractAddress = "0xD2fED57102Ee9d68cec41613985Cd8ed737BD748";
+  var abiArray = [
+  {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+          },
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+          }
+      ],
+      "name": "Approval",
+      "type": "event"
+  },
+  {
+      "constant": false,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+          }
+      ],
+      "name": "approve",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "constant": false,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "subtractedValue",
+              "type": "uint256"
+          }
+      ],
+      "name": "decreaseAllowance",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "constant": false,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "addedValue",
+              "type": "uint256"
+          }
+      ],
+      "name": "increaseAllowance",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "constant": false,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+          }
+      ],
+      "name": "transfer",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+          },
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+          }
+      ],
+      "name": "Transfer",
+      "type": "event"
+  },
+  {
+      "constant": false,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+          },
+          {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+          }
+      ],
+      "name": "transferFrom",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+          },
+          {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+          }
+      ],
+      "name": "allowance",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+          }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [],
+      "name": "decimals",
+      "outputs": [
+          {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [],
+      "name": "initialSupply",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+          {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+          {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  }];
+</script>
+
+<script>
+/*function txGet(){
+            console.log("In txGet, start fetch");
+            fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
+            "?FromAddress=" + web3.eth.defaultAccount, {
+                method: "GET"
+            })
+                .then(function (response) {
+                    if (response.status == 200) {
+                        console.log(response);
+
+                        return response.json();
+                    }
+                    // 200番以外のレスポンスはエラーを投げる
+                    return response.json().then(function (json) {
+                        throw new Error(json.message);
                     });
-            console.log('end of getBalance function');
+                })
+                .catch(function (err) {
+                    // レスポンスがエラーで返ってきたときの処理はここに記述する
+                    console.log("エラーが発生しました");
+                    console.log(err);
+
+                });	
+            console.log("finish fetch and txCreate")
+            //location.reload();
         }
+        */
+</script>
+
+<script>
+        // web3関連のコード
+    window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log('loading page');
+        if (typeof web3 !== 'undefined') {
+            window.web3 = new Web3(web3.currentProvider);
+            console.log('Web3: '+ web3.currentProvider.constructor.name);
+            web3 = new Web3(window.ethereum)		//https://stackoverflow.com/questions/56720654/how-to-get-an-account-address-from-metamask
+            console.log(web3);
+            window.ethereum.enable().catch(error => {
+                // User denied account access
+                console.log(error);
+            });
+            console.log("defaultAccount = %s", web3.eth.defaultAccount);
+            onlyRopstenTestNetwork(main);
+            console.log('finished checking network');
+        } else {
+            console.log('Please install metamask');
+            document.write("Please install metamask");
+            //document.write("Please install <a href="https://metamask.io/">MetaMask</a>")
+        }
+    })
+
+    function onlyRopstenTestNetwork(cb) {           //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log('onlyRopstenTestNetwork');
+        web3.version.getNetwork(function(err, netId) {
+            if (netId === "3") {
+                console.log("netId= %s", netId);
+            cb();
+            } else {
+            document.write("Please switch MetaMask to Ropsten Test Network and reload page.");
+            }
+        });
+    }
+
+    
+
+
+    function startApp(){        //https://noumenon-th.net/programming/2018/06/24/getaccounts/
+        console.log('beginning of startApp');
+        web3.eth.getAccounts(function(error, accounts) {
+            console.log('start getAccounts function');
+            if (error) return;
+            let user_account = accounts[0];
+            console.log("user_accuount[0]:".user_account);
+            if(typeof user_account !== 'undefined'){
+                console.log("user account not undefined");
+                console.log("------------");
+                console.log("accounts=".accounts);
+                let Balance = getBalance(user_account);
+                console.log("Balance:".Balance);
+            }else{
+                console.log("ログインして下さい");
+            }
+        });
+        console.log('end of startApp function');
+    }
+
+    function main() {       //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log("start main function");
+        var defaultAccount = web3.eth.defaultAccount;
+        var contract = web3.eth.contract(abiArray).at(contractAddress);
+        contract.name(function(err, name){
+            if(err) throw err;
+            contract.symbol(function(err, symbol){
+            if(err) throw err;
+            contract.balanceOf(defaultAccount, function(err, balance){
+                if(err) throw err;
+                initializeApp(defaultAccount, contract, name, symbol, balance);
+            });
+            });
+        });
+        
+        startApp();
+
+        console.log('end of main function');
+	}
+	 
+	//アドレスのETH量を取得
+    
+    function getBalance(_address){      //https://noumenon-th.net/programming/2018/06/24/getaccounts/
+        console.log('start getBalance function');
+        web3.eth.getBalance(_address, (error, balance) => {
+                    if (error) return;
+                    console.log(JSON.stringify(balance, null, 2));
+                });
+        console.log('end of getBalance function');
+    }
         
     
-        function initializeApp(defaultAccount, contract, name, symbol, balance) {
-        new Vue({
-            el: '#js-app',
-            data: {
-            defaultAccount: defaultAccount, // 選択されているEhtereumアカウント
-            name: name,                     // トークンの名前
-            symbol: symbol,                 // トークンのシンボル
-            balance: balance,               // トークンをいくら所持しているか
-            toAddress: "",                         // 送金先アドレス
-            amount: 0,                      // 送金する量
-            history: "",                     // 送金トランザクションのハッシュ
-            reason:"",
+    function initializeApp(defaultAccount, contract, name, symbol, balance) {
+    new Vue({
+        el: '#js-app',
+        data: {
+        defaultAccount: defaultAccount, // 選択されているEhtereumアカウント
+        name: name,                     // トークンの名前
+        symbol: symbol,                 // トークンのシンボル
+        balance: balance,               // トークンをいくら所持しているか
+        toAddress: "",                  // 送金先アドレス
+        amount: 0,                      // 送金する量
+		history: "",                    // 送金トランザクションのハッシュ
+		reason:"",						// 送金理由
+		toName:"",						// 送信先の相手の名前
+		fromName:"",						// 送り主の名前
+        beforeHistory:"",				// 1個前のトランザクション
+        txGetFlag: 0                    //get実行用フラグ
+        },
+        
+        methods: {
+            window:onload = function(){
+                var $this = this;
+                
+                console.log("windows:onload");
+                findTargetElement();
             },
-            /*created() {
-                axios.get('https://sample.com/wp-json/wp/v2/posts/').then(response => {
-                    this.posts= response.data;
-                })
-            },*/
-            methods: {
             // 残高の表示を整形するメソッド
             showBalance: function(balance) {
                 return (balance / 1e18).toFixed(2);
             },
-            // 送金するメソッド
-            send: function() {
-                var $this = this;
-                var sendAmount = this.amount * 1e18;
-                contract.transfer(this.toAddress, sendAmount, {from: defaultAccount}, function(err, txhash){
-                if (err) throw err;
-                $this.history = txhash;
-                console.log(txhash);
-                contract.balanceOf(defaultAccount, function(err, balance){
-                    $this.balance = balance;
-                });
-                });
-                //this.txCreate();
-            },
             //txcreate apiを叩くメソッド
             txGet: function (defaultAccount) {
-				console.log("In txCreate, start fetch");
-				fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
-					method: "GET",
-					body: JSON.stringify({
-						"txhash":txhash,
-						"FromAddress":fromAddress,
-						"FromName":fromName,
-						"Reason":reason,
-						"Amount":amount,
-						"ToAddress":toAddress,
-						"ToName":toName
-					})
-				})
-					.then(function (response) {
-						if (response.status == 200) {
-							console.log(response);
-							return response.json();
-						}
-						// 200番以外のレスポンスはエラーを投げる
-						return response.json().then(function (json) {
-							throw new Error(json.message);
-						});
-					})
-					.catch(function (err) {
-						// レスポンスがエラーで返ってきたときの処理はここに記述する
-						console.log("エラーが発生しました");
+                var $this = this;
+                if(defaultAccount){
+                    console.log("In txGet, start fetch");
+                    fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
+                    "?FromAddress=" + this.defaultAccount, {
+                        method: "GET"
+                    })
+                        .then(function (response) {
+                            if (response.status == 200) {
+                                console.log(response);
+                                console.log("txGetレスポンス=200");
+                                return response.json();
+                            }
+                            // 200番以外のレスポンスはエラーを投げる
+                            return response.json().then(function (json) {
+                                console.log("200番以外のエラー")
+                                throw new Error(json.message);
+                            });
+                        })
+                        .catch(function (err) {
+                            // レスポンスがエラーで返ってきたときの処理はここに記述する
+                            console.log("エラーが発生しました");
+                            console.log(err);
 
-					});	
-				console.log("finish fetch and txCreate")					
+                        });	
+                    console.log("finish fetch and txCreate")
+                    }
+                //location.reload();					
+            },
+            findTargetElement: function(){
+                console.log("start findTargetElement");
+                var $this = this;			
+                //defaultAccount取得までのインターバル設定
+                var set_interval_id = setInterval(this.findTargetElement, 3000);	
+				if(defaultAccount){
+                    console.log("success to get defaultAccount")
+                    clearInterval(this.set_interval_id);
+                    console.log("finish cleared clearInterval")
+                    this.txGet(this.defaultAccount);
+					
+				}
 			}
-            userGet: function (params) {
-                
-            }
-        })
-        console.log('end initializeApp function');
         }
-        //送金後にtx-createのapiを叩く
-        console.log("end of script");
+    })
+    console.log('end initializeApp function');
+    }
+    console.log("end of script");
     
-      </script>
+</script>
       
 
 </body>
