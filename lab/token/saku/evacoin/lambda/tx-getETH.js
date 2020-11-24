@@ -25,7 +25,7 @@ exports.handler = (event, context, callback) => {
         //FilterExpression: "#to = to"
         //"KeyConditionExpression": "FromAddress = :from",  //パーティションキー
         //検索値のプレースホルダの定義
-        ExpressionAttributeNames:{
+        /*ExpressionAttributeNames:{
             "#from": "FromAddress"
             //'#to': 'to'
         },
@@ -34,7 +34,7 @@ exports.handler = (event, context, callback) => {
             //":to": ToAddress
         },
 
-        KeyConditionExpression: "#from = :from"
+        KeyConditionExpression: "#from = :from"*/
         
     };
 
@@ -49,7 +49,7 @@ exports.handler = (event, context, callback) => {
             return;
         }
 
-        /*if(data.Items){
+        if(data.Items){
             data.Items.forEach(function(val){
                 if(val.FromAddress != From_Address){
                     delete val.FromAddress;
@@ -63,7 +63,7 @@ exports.handler = (event, context, callback) => {
                 }
                 
             });
-        }*/
+        }
 
         response.body = JSON.stringify({
             "transactions": data.Items
