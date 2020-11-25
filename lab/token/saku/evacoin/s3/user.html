@@ -3,75 +3,79 @@
     <meta charset="UTF-8">
     <!----  semantic ui読み込み ----->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>
     <title>マイページ</title>
+    <link rel="stylesheet" href="./common/style.css">
 </head>
 <body>
-
+<common-menu></common-menu>
 <p>マイページ</p>
 <div id="js-app">
     <h1>{{ name }} Wallet</h1>
         <p>あなたのアドレス: {{ defaultAccount }}</p>
         <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
-        <p>今までに受け取ったEVTの総量: <!--{{ totalReceive }}--></p>
     
-        <div>過去に受け取ったEVT</div>
-        <p>
-        <button v-on:click="txGet">取得</button>
-
-        <div class="ui segments">
-            <div class="ui segment" v-for="item in items">
-                <div v-if="item.FromAddress">
-                <i class="user icon">{{ item.FromName }}</i>
-                <p>({{ item.FromAddress }})</p>
-                <p>↓ {{ item.Amount }}EVT</p>
-                <i class="user icon">{{ item.ToName }}</i>
-                <p>({{ item.ToAddress }})</p>
-                </div>
-
-                <a class="ui fluid card" href="#">
-                    <div class="content">
-                        <h4 class="ui header">
-                            <i class="inverted red announcement icon"></i>
-                            <div class="content">
-                                <div class="header">送金理由</div>
-                                <div class="sub header">{{ item.Reason }}</div>
+        <div>過去のトランザクション</div><br>
+        <div class="vue">
+            <ul class="tabs">
+                <li @click="change('1')" v-bind:class="{'active': isActive === '1'}">送金履歴</li>
+                <li @click="change('2')" v-bind:class="{'active': isActive === '2'}">受信履歴</li>
+            </ul>
+            <ul class="ui text container">
+                <li v-if="isActive === '1'">
+                    <div class="ui fluid segments">
+                        <div v-for="item in items">
+                            <div class="ui fluid segment" v-if="item.FromAddress">
+                                <p>{{ convert(item.TimeStamp) }}</p>
+                                <i class="user icon">{{ item.FromName }}</i>
+                                <p>({{ item.FromAddress }})</p>
+                                <p>↓ {{ item.Amount }}EVT</p>
+                                <i class="user icon">{{ item.ToName }}</i>
+                                <p>({{ item.ToAddress }})</p>
+                                <a class="ui text card" href="#">
+                                    <div class="content">
+                                        <h4 class="ui header">
+                                            <i class="inverted red announcement icon"></i>
+                                            <div class="content">
+                                                <div class="sub header">送金理由</div>
+                                                <div class="header">{{ item.Reason }}</div>                                                
+                                            </div>
+                                        </h4>
+                                    </div>
+                                </a>
                             </div>
-                        </h4>
+                        </div>
                     </div>
-                </a>
-                
-                
-            </div>
-        </div>
-        <div>-------------------</div>
-        <div class="ui segments">
-            <div class="ui segment" v-for="receive in receives">
-                <div v-if="receive.ToAddress">
-                <i class="user icon">{{ receive.ToName }}</i>
-                <p>({{ receive.ToAddress }})</p>
-                <p>↓ {{ receive.Amount }}EVT</p>
-                <i class="user icon">{{ receive.FromName }}</i>
-                <p>({{ receive.FromAddress }})</p>
-                </div>
-
-                <a class="ui fluid card" href="#">
-                    <div class="content">
-                        <h4 class="ui header">
-                            <i class="inverted red announcement icon"></i>
-                            <div class="content">
-                                <div class="header">送金理由</div>
-                                <div class="sub header">{{ receive.Reason }}</div>
+                </li>
+                <li v-else-if="isActive === '2'">
+                    <div class="ui fluid segments">
+                        <div v-for="receive in receives">
+                            <div class="ui fluid segment" v-if="receive.ToAddress">
+                                <p>{{ convert(receive.TimeStamp) }}</p>
+                                <i class="user icon">{{ receive.FromName }}</i>
+                                <p>({{ receive.FromAddress }})</p>
+                                <p>↓ {{ receive.Amount }}EVT</p>
+                                <i class="user icon">{{ receive.ToName }}</i>
+                                <p>({{ receive.ToAddress }})</p>
+                                <a class="ui text card" href="#">
+                                    <div class="content">
+                                        <h4 class="ui header">
+                                            <i class="inverted red announcement icon"></i>
+                                            <div class="content">
+                                                <div class="sub header">送金理由</div>
+                                                <div class="header">{{ receive.Reason }}</div>                                                
+                                            </div>
+                                        </h4>
+                                    </div>
+                                </a>
                             </div>
-                        </h4>
+                        </div>
                     </div>
-                </a>
-                
-                
-            </div>
-        </div>
-
+                </li>
+            </ul>
         
-        </p>
+        </div>
 </div>
     
 
@@ -407,36 +411,6 @@
 </script>
 
 <script>
-/*function txGet(){
-            console.log("In txGet, start fetch");
-            fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
-            "?FromAddress=" + web3.eth.defaultAccount, {
-                method: "GET"
-            })
-                .then(function (response) {
-                    if (response.status == 200) {
-                        console.log(response);
-
-                        return response.json();
-                    }
-                    // 200番以外のレスポンスはエラーを投げる
-                    return response.json().then(function (json) {
-                        throw new Error(json.message);
-                    });
-                })
-                .catch(function (err) {
-                    // レスポンスがエラーで返ってきたときの処理はここに記述する
-                    console.log("エラーが発生しました");
-                    console.log(err);
-
-                });	
-            console.log("finish fetch and txCreate")
-            //location.reload();
-        }
-        */
-</script>
-
-<script>
     var user_account;   //global
         // web3関連のコード
     window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
@@ -488,37 +462,6 @@
                 console.log("accounts=" + user_account);
                 let Balance = getBalance(user_account);
                 console.log("Balance:" + Balance);
-                /*console.log("start fetch");
-                fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
-                    "?FromAddress=" + user_account, {
-                        method: "GET"
-                    })
-                        .then(function (response) {
-                            if (response.status == 200) {
-                                console.log(response);
-                                console.log("txGetレスポンス=200");
-                                return response.json();
-                            }
-                            // 200番以外のレスポンスはエラーを投げる
-                            return response.json().then(function (json) {
-                                console.log("200番以外のエラー")
-                                throw new Error(json.message);
-                            });
-                        })
-                        .then(function(json){
-                            console.log("jsonの中身");
-                            console.log(json);
-                            console.log(json.transactions[1]);
-                            console.log(json.transactions[1].Reason);
-                        })
-                        .catch(function (err) {
-                            // レスポンスがエラーで返ってきたときの処理はここに記述する
-                            console.log("エラーが発生しました");
-                            console.log(err);
-
-                        });	
-                console.log("end fetch");
-                */
             }else{
                 console.log("ログインして下さい");
             }
@@ -577,8 +520,10 @@
         txGetFlag: 0,                   //get実行用フラグ
         items:[],                       //送信側のトランザクション
         receives:[],                    //受け取り側のトランザクション
-        totalReceive:"",                   //総受信量
-        totalSend:""                       //総送信量
+        totalReceive:"",                //総受信量
+        totalSend:"",                   //総送信量
+        mode:"send",                    //履歴表示の切り替え
+        isActive: '1'
         },
         
         methods: {
@@ -655,8 +600,8 @@
                             });
                         })
                         .then(function(json){   //json形式じゃない？Object形式
-                            var arrayList1 = Object.entries(json).map(([key, value]) => ({[key]: value}));
-                            console.log(arrayList1);
+                            //var arrayList1 = Object.entries(json).map(([key, value]) => ({[key]: value}));
+                            //console.log(arrayList1);
                             console.log("jsonの中身");
                             console.log("defaultaccount=" + defaultAccount);
                             vm.items = json.transactions;
@@ -715,29 +660,19 @@
                     console.log("finish fetch and txGetReceive");
             },
 
-            /*exeFTE: function(){
-                var set_interval_id = setInterval(this.findTargetElement, 3000);
-                this.findTargetElement();
+            convert: function(timestamp){
+				var date = new Date(timestamp).toLocaleDateString()+ " " + new Date(timestamp).toLocaleTimeString();
+                return date;
             },
 
-            findTargetElement: function(){  //findTargetElement
-                console.log("start findTargetElement");
-                var $this = this;			
-                //defaultAccount取得までのインターバル設定
-                	
-				if(defaultAccount){
-                    console.log("success to get defaultAccount")
-                    clearInterval(this.set_interval_id);
-                    console.log("finish cleared clearInterval")
-                    this.txGet(this.defaultAccount);
-					
-				}
-            },*/
-            
-            /*created: function(){
-                console.log("created function");
-                this.exeFTE();
-            }*/
+            switch: function(tab){
+                var $this = this;
+                this.mode = tab;
+            },
+
+            change: function(num){
+                this.isActive = num
+            }
         }
     })
     console.log('end initializeApp function');
@@ -746,6 +681,6 @@
     
 </script>
       
-<!--<script src="./js/tx-getETH.js" charset="utf-8"></script>-->
+<script src="./js/menu.js" charset="utf-8"></script>
 </body>
 </html>

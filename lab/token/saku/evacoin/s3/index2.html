@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Token Wallet</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>
+	<meta charset="UTF-8">
+	<title>Token Wallet</title>
 </head>
 <body>
-
+<common-menu></common-menu>
   <div id="js-app">
     <h1>{{ name }} Wallet</h1>
     <p>あなたのアドレス: {{ defaultAccount }}</p>
@@ -35,12 +38,14 @@
     <p>
       <button @click="send">送金</button>
 	</p>
-	<p>
-		Transaction(hard): <a href="https://ropsten.etherscan.io/tx/0xfbf031925f512c4a9593b7f19080d9b91caf9e5443a2c020ad1b84a1f3e55a09">トランザクション</a>
-	</p>
-    <p v-model="history">
-    Transaction history: <a :href="'https://ropsten.etherscan.io/tx/' + history">{{ history }}
-    </a>
+    <p v-if="history">
+    今回のトランザクション: <a :href="'https://ropsten.etherscan.io/tx/' + history">{{ history }}
+	</a><br>
+	<div>利用者一覧</div>
+	<div class="ui segment" v-for="item in items">
+			<i class="user icon">{{ item.name }}</i>
+			<p>({{ item.address }})</p>
+	</div>
 </p>
   </div>
 
@@ -459,7 +464,7 @@
     
 
     function initializeApp(defaultAccount, contract, name, symbol, balance) {
-    new Vue({
+    var vm = new Vue({
         el: '#js-app',
         data: {
         defaultAccount: defaultAccount, // 選択されているEhtereumアカウント
@@ -472,8 +477,45 @@
 		reason:"",						// 送金理由
 		toName:"",						// 送信先の相手の名前
 		fromName:"",						// 送り主の名前
-		beforeHistory:""				// 1個前のトランザクション
-        },
+		beforeHistory:"",				// 1個前のトランザクション
+		items:[]
+		},
+		
+		created: function(){
+			var $this = this;
+			console.log("スタート fetch");
+			fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/user", 
+			{
+					method: "GET"
+				})
+					.then(function (response) {
+						if (response.status == 200) {
+							console.log(response);
+							console.log("users-getレスポンス=200");
+							return response.json();
+						}
+						// 200番以外のレスポンスはエラーを投げる
+						return response.json().then(function (json) {
+							console.log("200番以外のエラー")
+							throw new Error(json.message);
+						});
+					})
+					.then(function(json){
+						console.log("jsonの中身");
+						vm.items = json.users;
+						console.log(json);
+						console.log(json.users[1]);
+						console.log(json.users[1].Reason);
+					})
+					.catch(function (err) {
+						// レスポンスがエラーで返ってきたときの処理はここに記述する
+						console.log("エラーが発生しました");
+						console.log(err);
+
+					});	
+			console.log("end fetch");
+		},
+
         methods: {
         // 残高の表示を整形するメソッド
 			showBalance: function(balance) {
@@ -573,6 +615,7 @@
     console.log("end of script");
 
   </script>
+  <script src="./js/menu.js" charset="utf-8"></script>
   
 </body>
 </html>

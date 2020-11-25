@@ -6,7 +6,7 @@
     <title>tx一覧</title>
 </head>
 <body>
-
+<common-menu></common-menu>
 <p>トランザクション一覧</p>
 <div id="js-app">
     <h1>{{ name }} Wallet</h1>
@@ -16,11 +16,12 @@
         <div class="ui segments">
             <div class="ui segment" v-for="item in items">
                 <div v-if="item.FromAddress">
-                <i class="user icon">{{ item.FromName }}</i>
-                <p>({{ item.FromAddress }})</p>
-                <p>↓ {{ item.Amount }}EVT</p>
-                <i class="user icon">{{ item.ToName }}</i>
-                <p>({{ item.ToAddress }})</p>
+					<p>{{ convert(item.TimeStamp) }}</p>
+					<i class="user icon">{{ item.FromName }}</i>
+					<p>({{ item.FromAddress }})</p>
+					<p>↓ {{ item.Amount }}EVT</p>
+					<i class="user icon">{{ item.ToName }}</i>
+					<p>({{ item.ToAddress }})</p>
                 </div>
 
                 <a class="ui fluid card" href="#">
@@ -433,11 +434,11 @@
         contract.name(function(err, name){
             if(err) throw err;
             contract.symbol(function(err, symbol){
-            if(err) throw err;
-            contract.balanceOf(defaultAccount, function(err, balance){
-                if(err) throw err;
-                initializeApp(defaultAccount, contract, name, symbol, balance);
-            });
+				if(err) throw err;
+				contract.balanceOf(defaultAccount, function(err, balance){
+					if(err) throw err;
+					initializeApp(defaultAccount, contract, name, symbol, balance);
+				});
             });
         });
         
@@ -514,46 +515,6 @@
 		},
         
         methods: {
-            /*window:onload = function(){
-                var $this = this;
-                
-                console.log("windows:onload");
-                this.showTxs();
-			},*/
-			
-			showTxs: function(){
-				console.log("start fetch");
-				fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/txs", 
-				{
-                        method: "GET"
-                    })
-                        .then(function (response) {
-                            if (response.status == 200) {
-                                console.log(response);
-                                console.log("txGetレスポンス=200");
-                                return response.json();
-                            }
-                            // 200番以外のレスポンスはエラーを投げる
-                            return response.json().then(function (json) {
-                                console.log("200番以外のエラー")
-                                throw new Error(json.message);
-                            });
-                        })
-                        .then(function(json){
-                            console.log("jsonの中身");
-                            console.log(json);
-                            console.log(json.transactions[1]);
-                            console.log(json.transactions[1].Reason);
-                        })
-                        .catch(function (err) {
-                            // レスポンスがエラーで返ってきたときの処理はここに記述する
-                            console.log("エラーが発生しました");
-                            console.log(err);
-
-                        });	
-                console.log("end fetch");
-			},
-
             // 残高の表示を整形するメソッド
             showBalance: function(balance) {
                 var $this = this;
@@ -565,67 +526,11 @@
 				}
                 return (balance / 1e18).toFixed(2);
             },
-            //txcreate apiを叩くメソッド
-            txGet: function (defaultAccount) {
-                var $this = this;
-                //if(defaultAccount){
-                    console.log("In txGet, start fetch");
-                    fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
-                    "?FromAddress=" + user_account, {
-                        method: "GET"
-                    })
-                        .then(function (response) {
-                            if (response.status == 200) {
-                                console.log(response);
-                                console.log("txGetレスポンス=200");
-                                return response.json();
-                            }
-                            // 200番以外のレスポンスはエラーを投げる
-                            return response.json().then(function (json) {
-                                console.log("200番以外のエラー")
-                                throw new Error(json.message);
-                            });
-                        })
-                        .then(function(json){
-                            console.log("jsonの中身");
-                            console.log(json);
-                            console.log(json.transactions[1]);
-                            console.log(json.transactions[1].Reason);
-                        })
-                        .catch(function (err) {
-                            // レスポンスがエラーで返ってきたときの処理はここに記述する
-                            console.log("エラーが発生しました");
-                            console.log(err);
-
-                        });	
-                    console.log("finish fetch and txCreate")
-                //}
-                //location.reload();					
-            },
-
-            exeFTE: function(){
-                var set_interval_id = setInterval(this.findTargetElement, 3000);
-                this.findTargetElement();
-            },
-
-            findTargetElement: function(){  //findTargetElement
-                console.log("start findTargetElement");
-                var $this = this;			
-                //defaultAccount取得までのインターバル設定
-                	
-				if(defaultAccount){
-                    console.log("success to get defaultAccount")
-                    clearInterval(this.set_interval_id);
-                    console.log("finish cleared clearInterval")
-                    this.txGet(this.defaultAccount);
-					
-				}
-            },
             
-            /*created: function(){
-                console.log("created function");
-                this.exeFTE();
-            }*/
+            convert: function(timestamp){
+				var date = new Date(timestamp).toLocaleDateString()+ " " + new Date(timestamp).toLocaleTimeString();
+                return date;
+            }
         }
     })
     console.log('end initializeApp function');
@@ -634,6 +539,6 @@
     
 </script>
       
-<!--<script src="./js/tx-getETH.js" charset="utf-8"></script>-->
+<script src="./js/menu.js" charset="utf-8"></script>
 </body>
 </html>
