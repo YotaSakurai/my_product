@@ -13,8 +13,10 @@
         <p>今までに受け取ったEVTの総量: <!--{{ totalReceive }}--></p>
 </div>
     
-<div>過去のトランザクション一覧</div>
-<div>一件目</div>
+<div>過去に受け取ったEVT</div>
+<p>
+<button @click="txGet">取得</button>
+</p>
 
 <script>
     /*var AWS = require('aws-sdk');
@@ -377,6 +379,7 @@
 </script>
 
 <script>
+    var user_account;   //global
         // web3関連のコード
     window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
         console.log('loading page');
@@ -419,14 +422,45 @@
         web3.eth.getAccounts(function(error, accounts) {
             console.log('start getAccounts function');
             if (error) return;
-            let user_account = accounts[0];
-            console.log("user_accuount[0]:".user_account);
+            user_account = accounts[0]; //グローバル変数にする
+            console.log("user_account[0]:"+ user_account);
             if(typeof user_account !== 'undefined'){
                 console.log("user account not undefined");
                 console.log("------------");
-                console.log("accounts=".accounts);
+                console.log("accounts=" + user_account);
                 let Balance = getBalance(user_account);
-                console.log("Balance:".Balance);
+                console.log("Balance:" + Balance);
+                console.log("start fetch");
+                fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
+                    "?FromAddress=" + user_account, {
+                        method: "GET"
+                    })
+                        .then(function (response) {
+                            if (response.status == 200) {
+                                console.log(response);
+                                console.log("txGetレスポンス=200");
+                                return response.json();
+                            }
+                            // 200番以外のレスポンスはエラーを投げる
+                            return response.json().then(function (json) {
+                                console.log("200番以外のエラー")
+                                throw new Error(json.message);
+                            });
+                        })
+                        .then(function(json){
+                            console.log("jsonの中身");
+                            console.log(json);
+                            console.log(json.transactions[1]);
+                            console.log(json.transactions[1].Reason);
+                        })
+                        .catch(function (err) {
+                            // レスポンスがエラーで返ってきたときの処理はここに記述する
+                            console.log("エラーが発生しました");
+                            console.log(err);
+
+                        });	
+                console.log("end fetch");
+                
             }else{
                 console.log("ログインして下さい");
             }
@@ -452,6 +486,7 @@
         startApp();
 
         console.log('end of main function');
+        console.log(user_account);
 	}
 	 
 	//アドレスのETH量を取得
@@ -485,12 +520,12 @@
         },
         
         methods: {
-            window:onload = function(){
+            /*window:onload = function(){
                 var $this = this;
                 
                 console.log("windows:onload");
-                findTargetElement();
-            },
+                exeFTE();
+            },*/
             // 残高の表示を整形するメソッド
             showBalance: function(balance) {
                 return (balance / 1e18).toFixed(2);
@@ -508,6 +543,7 @@
                             if (response.status == 200) {
                                 console.log(response);
                                 console.log("txGetレスポンス=200");
+                                console.log(json);
                                 return response.json();
                             }
                             // 200番以外のレスポンスはエラーを投げる
@@ -526,11 +562,16 @@
                     }
                 //location.reload();					
             },
+
+            exeFTE: function(){
+                var set_interval_id = setInterval(this.findTargetElement, 3000);
+            },
+
             findTargetElement: function(){
                 console.log("start findTargetElement");
                 var $this = this;			
                 //defaultAccount取得までのインターバル設定
-                var set_interval_id = setInterval(this.findTargetElement, 3000);	
+                	
 				if(defaultAccount){
                     console.log("success to get defaultAccount")
                     clearInterval(this.set_interval_id);
