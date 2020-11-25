@@ -1,6 +1,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <!----  semantic ui読み込み ----->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
     <title>マイページ</title>
 </head>
 <body>
@@ -15,8 +17,10 @@
         <div>過去に受け取ったEVT</div>
         <p>
         <button v-on:click="txGet">取得</button>
+
         <div class="ui segments">
             <div class="ui segment" v-for="item in items">
+                <i class="user icon">from{{ item.FromAddress }}</i>
                 {{ item.Reason }}
                 
             </div>
