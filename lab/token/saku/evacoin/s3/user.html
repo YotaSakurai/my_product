@@ -20,11 +20,28 @@
 
         <div class="ui segments">
             <div class="ui segment" v-for="item in items">
-                <i class="user icon">from{{ item.FromAddress }}</i>
-                {{ item.Reason }}
+                <div v-if="item.FromAddress">
+                <i class="user icon">{{ item.FromName }}({{ item.FromAddress }})</i>
+                <i>送金理由{{ item.Reason }}</i>
+                </div>
+
+                <a class="ui fluid card" href="#">
+                    <div class="content">
+                        <h4 class="ui header">
+                            <i class="inverted red announcement icon"></i>
+                            <div class="content">
+                                <div class="header">おしらせ</div>
+                                <div class="sub header">運営からの重要なおしらせ</div>
+                            </div>
+                        </h4>
+                    </div>
+                </a>
+                
                 
             </div>
         </div>
+
+        
         </p>
 </div>
     
@@ -442,7 +459,7 @@
                 console.log("accounts=" + user_account);
                 let Balance = getBalance(user_account);
                 console.log("Balance:" + Balance);
-                console.log("start fetch");
+                /*console.log("start fetch");
                 fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
                     "?FromAddress=" + user_account, {
                         method: "GET"
@@ -472,7 +489,7 @@
 
                         });	
                 console.log("end fetch");
-                
+                */
             }else{
                 console.log("ログインして下さい");
             }
