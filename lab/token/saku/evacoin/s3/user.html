@@ -11,12 +11,20 @@
         <p>あなたのアドレス: {{ defaultAccount }}</p>
         <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
         <p>今までに受け取ったEVTの総量: <!--{{ totalReceive }}--></p>
+    
+        <div>過去に受け取ったEVT</div>
+        <p>
+        <button v-on:click="txGet">取得</button>
+        <div class="ui segments">
+            <div class="ui segment" v-for="item in items">
+                {{ item.Reason }}
+                
+            </div>
+        </div>
+        </p>
 </div>
     
-<div>過去に受け取ったEVT</div>
-<p>
-<button v-on:click="txGet">取得</button>
-</p>
+
 
 <script>
     /*var AWS = require('aws-sdk');
@@ -502,7 +510,7 @@
         
     
     function initializeApp(defaultAccount, contract, name, symbol, balance) {
-    new Vue({
+    var vm = new Vue({
         el: '#js-app',
         data: {
         defaultAccount: defaultAccount, // 選択されているEhtereumアカウント
@@ -515,8 +523,9 @@
 		reason:"",						// 送金理由
 		toName:"",						// 送信先の相手の名前
 		fromName:"",						// 送り主の名前
-        beforeHistory:"",				// 1個前のトランザクション
-        txGetFlag: 0                    //get実行用フラグ
+        beforeAccount:"",				// account保存
+        txGetFlag: 0,                    //get実行用フラグ
+        items:[]
         },
         
         methods: {
@@ -528,12 +537,50 @@
             },*/
             // 残高の表示を整形するメソッド
             showBalance: function(balance) {
+                var $this = this;
+                //defaultAccountのtransactionをget
+                if(this.defaultAccount != this.beforeAccount){
+                    this.beforeAccount = this.defaultAccount;
+                    console.log(this.defaultAccount);
+                    console.log(this.beforeAccount);
+                    fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
+                        "?FromAddress=" + this.defaultAccount, {
+                            method: "GET"
+                        })
+                            .then(function (response) {
+                                if (response.status == 200) {
+                                    console.log(response);
+                                    console.log("txGetレスポンス=200");
+                                    return response.json();
+                                }
+                                // 200番以外のレスポンスはエラーを投げる
+                                return response.json().then(function (json) {
+                                    console.log("200番以外のエラー")
+                                    throw new Error(json.message);
+                                });
+                            })
+                            .then(function(json){
+                                console.log("jsonの中身");
+                                vm.items = json.transactions;
+                                console.log(vm.items);
+                                console.log(json);
+                                console.log(json.transactions[1]);
+                                console.log(json.transactions[1].Reason);
+                            })
+                            .catch(function (err) {
+                                // レスポンスがエラーで返ってきたときの処理はここに記述する
+                                console.log("エラーが発生しました");
+                                console.log(err);
+
+                            });
+                        }
+
                 return (balance / 1e18).toFixed(2);
             },
             //txcreate apiを叩くメソッド
             txGet: function (defaultAccount) {
                 var $this = this;
-                if(defaultAccount){
+                //if(defaultAccount){
                     console.log("In txGet, start fetch");
                     fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
                     "?FromAddress=" + user_account, {
@@ -564,15 +611,16 @@
 
                         });	
                     console.log("finish fetch and txCreate")
-                    }
+                //}
                 //location.reload();					
             },
 
             exeFTE: function(){
                 var set_interval_id = setInterval(this.findTargetElement, 3000);
+                this.findTargetElement();
             },
 
-            findTargetElement: function(){
+            findTargetElement: function(){  //findTargetElement
                 console.log("start findTargetElement");
                 var $this = this;			
                 //defaultAccount取得までのインターバル設定
@@ -584,7 +632,12 @@
                     this.txGet(this.defaultAccount);
 					
 				}
-			}
+            },
+            
+            /*created: function(){
+                console.log("created function");
+                this.exeFTE();
+            }*/
         }
     })
     console.log('end initializeApp function');
@@ -593,6 +646,6 @@
     
 </script>
       
-
+<!--<script src="./js/tx-getETH.js" charset="utf-8"></script>-->
 </body>
 </html>

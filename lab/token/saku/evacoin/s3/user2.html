@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Token Wallet</title>
+</head>
+<body>
+
+  <div id="js-app">
+    <h1>{{ name }} Wallet</h1>
+    <p>あなたのアドレス: {{ defaultAccount }}</p>
+    <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
+    <p>
+       送金先: <br />
+       <input v-model="toAddress" type="text" />
+	</p>
+	<p>
+		宛名: <br />
+		<input v-model="toName" type="text">
+	 </p>
+    <p>
+      送る量: <br />
+	  <input v-model="amount" type="number" />
+	  <p>{{ amount }}</p>
+	</p>
+	<p>
+		送る理由:
+		<input  v-model="reason" type="text">
+		<p>{{ reason }}</p>
+	</p>
+	<p>
+		あなたの名前またはニックネーム: <br />
+		<input v-model="fromName" type="text">
+	</p>
+    <p>
+      <button @click="send">送金</button>
+	</p>
+	<p>
+		Transaction(hard): <a href="https://ropsten.etherscan.io/tx/0xfbf031925f512c4a9593b7f19080d9b91caf9e5443a2c020ad1b84a1f3e55a09">トランザクション</a>
+	</p>
+    <p v-model="history">
+    Transaction history: <a :href="'https://ropsten.etherscan.io/tx/' + history">{{ history }}
+    </a>
+</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  
+  
+  <script>
+	  var contractAddress = "0xD2fED57102Ee9d68cec41613985Cd8ed737BD748";
+    var abiArray = [
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "subtractedValue",
+				"type": "uint256"
+			}
+		],
+		"name": "decreaseAllowance",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "addedValue",
+				"type": "uint256"
+			}
+		],
+		"name": "increaseAllowance",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			}
+		],
+		"name": "allowance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "decimals",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "initialSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}];
+  </script>
+
+  
+  <script>
+// web3関連のコード
+    window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log('loading page');
+        if (typeof web3 !== 'undefined') {
+            window.web3 = new Web3(web3.currentProvider);
+			console.log('Web3: '+ web3.currentProvider.constructor.name);
+			web3 = new Web3(window.ethereum)		//https://stackoverflow.com/questions/56720654/how-to-get-an-account-address-from-metamask
+			console.log(web3);
+			window.ethereum.enable().catch(error => {
+				// User denied account access
+				console.log(error);
+			});
+
+			console.log("defaultAccount = %s", web3.eth.defaultAccount);
+            onlyRopstenTestNetwork(main);
+            console.log('finished checking network');
+        } else {
+            console.log('Please install metamask');
+            document.write("Please install metamask");
+            //document.write("Please install <a href="https://metamask.io/">MetaMask</a>")
+        }
+    })
+
+    function onlyRopstenTestNetwork(cb) {           //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log('onlyRopstenTestNetwork');
+        web3.version.getNetwork(function(err, netId) {
+            if (netId === "3") {
+                console.log("netId= %s", netId);
+            cb();
+            } else {
+            document.write("Please switch MetaMask to Ropsten Test Network and reload page.");
+            }
+        });
+    }
+
+    
+
+
+    function startApp(){        //https://noumenon-th.net/programming/2018/06/24/getaccounts/
+        console.log('beginning of startApp');
+        web3.eth.getAccounts(function(error, accounts) {
+            console.log('start getAccounts function');
+            if (error) return;
+            let user_account = accounts[0];
+            console.log("user_accuount[0]:".user_account);
+            if(typeof user_account !== 'undefined'){
+                console.log("user account not undefined");
+                console.log("------------");
+                console.log("accounts=".accounts);
+                let Balance = getBalance(user_account);
+                console.log("Balance:".Balance);
+            }else{
+                console.log("ログインして下さい");
+            }
+        });
+        console.log('end of startApp function');
+    }
+
+    function main() {       //http://lotz84.hatenablog.com/entry/2017/12/13/081920
+        console.log("start main function");
+        var defaultAccount = web3.eth.defaultAccount;
+        var contract = web3.eth.contract(abiArray).at(contractAddress);
+        contract.name(function(err, name){
+            if(err) throw err;
+            contract.symbol(function(err, symbol){
+            if(err) throw err;
+            contract.balanceOf(defaultAccount, function(err, balance){
+                if(err) throw err;
+                initializeApp(defaultAccount, contract, name, symbol, balance);
+            });
+            });
+        });
+        
+        startApp();
+
+        console.log('end of main function');
+	}
+	 
+	//アドレスのETH量を取得
+    
+    function getBalance(_address){      //https://noumenon-th.net/programming/2018/06/24/getaccounts/
+        console.log('start getBalance function');
+        web3.eth.getBalance(_address, (error, balance) => {
+                    if (error) return;
+                    console.log(JSON.stringify(balance, null, 2));
+                });
+        console.log('end of getBalance function');
+    }
+    
+
+    function initializeApp(defaultAccount, contract, name, symbol, balance) {
+    new Vue({
+        el: '#js-app',
+        data: {
+        defaultAccount: defaultAccount, // 選択されているEhtereumアカウント
+        name: name,                     // トークンの名前
+        symbol: symbol,                 // トークンのシンボル
+        balance: balance,               // トークンをいくら所持しているか
+        toAddress: "",                  // 送金先アドレス
+        amount: 0,                      // 送金する量
+		history: "",                    // 送金トランザクションのハッシュ
+		reason:"",						// 送金理由
+		toName:"",						// 送信先の相手の名前
+		fromName:"",						// 送り主の名前
+		beforeHistory:""				// 1個前のトランザクション
+        },
+        methods: {
+        // 残高の表示を整形するメソッド
+			showBalance: function(balance) {
+				return (balance / 1e18).toFixed(2);
+			},
+			// 送金するメソッド
+			send: function() {
+				var $this = this;
+				var sendAmount = this.amount * 1e18;
+				var set_interval_id = setInterval(this.findTargetElement, 3000);	//txhashが発行されるまでのインターバル設定
+
+				contract.transfer(this.toAddress, sendAmount, {from: defaultAccount}, function(err, txhash){
+				if (err) throw err;
+				$this.history = txhash;
+				console.log(txhash);
+				contract.balanceOf(defaultAccount, function(err, balance){
+					$this.balance = balance;
+				});
+				});
+				console.log("this.reason:%s", this.reason);
+				console.log("this.sendAmount:%s", this.sendAmount);
+				console.log("this.amount:%s", this.amount);
+				console.log("defaultAccount:%s", this.defaultAccount);
+				console.log("this.fromName:%s", this.fromName);
+				console.log("this.toAddress:%s", this.toAddress);
+				console.log("this.toName:%s", this.toName);
+				console.log("this.history:%s", this.history);
+				//this.txCreate(this.reason, sendAmount, defaultAccount, this.fromName, this.toAddress, this.toName, this.history);
+				this.findTargetElement();
+			},
+			//txcreate apiを叩くメソッド
+			txCreate: function (reason, amount, fromAddress, fromName, toAddress, toName, txhash) {
+				
+				console.log("In txCreate, start fetch");
+				fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
+					method: "POST",
+					body: JSON.stringify({
+						"txhash":txhash,
+						"FromAddress":fromAddress,
+						"FromName":fromName,
+						"Reason":reason,
+						"Amount":amount,
+						"ToAddress":toAddress,
+						"ToName":toName
+					})
+				})
+					.then(function (response) {
+						if (response.status == 200) {
+							console.log(response);
+							return response.json();
+						}
+						// 200番以外のレスポンスはエラーを投げる
+						return response.json().then(function (json) {
+							throw new Error(json.message);
+						});
+					})
+					.catch(function (err) {
+						// レスポンスがエラーで返ってきたときの処理はここに記述する
+						console.log("エラーが発生しました");
+
+					});	
+				console.log("finish fetch and txCreate")					
+			},
+			// txhashが発行されるまでの待ち用の関数
+			findTargetElement: function(){
+				var $this = this;			
+
+				if(this.history){
+					if(this.history != this.beforeHistory){
+						clearInterval(this.set_interval_id);
+						console.log("finish cleared clearInterval")
+						this.beforeHistory = this.history;
+						this.txCreate(this.reason, this.amount, this.defaultAccount, this.fromName, this.toAddress, this.toName, this.history);					
+					}
+					
+				}
+			}
+		}
+    })
+    console.log('end initializeApp function');
+    }
+    //送金後にtx-createのapiを叩く
+    console.log("end of script");
+
+  </script>
+  
+</body>
+</html>
