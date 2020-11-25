@@ -572,11 +572,13 @@
 		history: "",                    // 送金トランザクションのハッシュ
 		reason:"",						// 送金理由
 		toName:"",						// 送信先の相手の名前
-		fromName:"",						// 送り主の名前
+		fromName:"",					// 送り主の名前
         beforeAccount:"",				// account保存
-        txGetFlag: 0,                    //get実行用フラグ
+        txGetFlag: 0,                   //get実行用フラグ
         items:[],                       //送信側のトランザクション
-        receives:[]                     //受け取り側のトランザクション
+        receives:[],                    //受け取り側のトランザクション
+        totalReceive:"",                   //総受信量
+        totalSend:""                       //総送信量
         },
         
         methods: {
@@ -633,6 +635,7 @@
             },
             //txcreate apiを叩くメソッド
             txGet: function (defaultAccount) {
+                var $this = this;
                 //if(defaultAccount){
                     console.log("In txGet, start fetch");
                     fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
@@ -651,13 +654,16 @@
                                 throw new Error(json.message);
                             });
                         })
-                        .then(function(json){
+                        .then(function(json){   //json形式じゃない？Object形式
+                            var arrayList1 = Object.entries(json).map(([key, value]) => ({[key]: value}));
+                            console.log(arrayList1);
                             console.log("jsonの中身");
                             console.log("defaultaccount=" + defaultAccount);
                             vm.items = json.transactions;
                             console.log(vm.items);
+                            console.log("送金額" + vm.items[1].Amount);
                             console.log(json);
-                            console.log(json.transactions);
+                            console.log(json.transactions[1]);
                             console.log(json.transactions[1].Reason);
                         })
                         .catch(function (err) {
@@ -672,6 +678,7 @@
             },
 
             txGetReceive: function(defaultAccount){
+                var $this = this;
                 //if(defaultAccount){
                     console.log("In txGetReceive, start fetch");
                     fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/txreceive" + 
