@@ -15,7 +15,7 @@
     
 <div>過去に受け取ったEVT</div>
 <p>
-<button @click="txGet">取得</button>
+<button v-on:click="txGet">取得</button>
 </p>
 
 <script>
@@ -536,14 +536,13 @@
                 if(defaultAccount){
                     console.log("In txGet, start fetch");
                     fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
-                    "?FromAddress=" + this.defaultAccount, {
+                    "?FromAddress=" + user_account, {
                         method: "GET"
                     })
                         .then(function (response) {
                             if (response.status == 200) {
                                 console.log(response);
                                 console.log("txGetレスポンス=200");
-                                console.log(json);
                                 return response.json();
                             }
                             // 200番以外のレスポンスはエラーを投げる
@@ -551,6 +550,12 @@
                                 console.log("200番以外のエラー")
                                 throw new Error(json.message);
                             });
+                        })
+                        .then(function(json){
+                            console.log("jsonの中身");
+                            console.log(json);
+                            console.log(json.transactions[1]);
+                            console.log(json.transactions[1].Reason);
                         })
                         .catch(function (err) {
                             // レスポンスがエラーで返ってきたときの処理はここに記述する
