@@ -68,6 +68,7 @@ exports.handler = (event, context, callback) => {
         response.body = JSON.stringify({
             "transactions": data.Items
         });
+        console.log(data.Items);
         callback(null, response);
     });
 };

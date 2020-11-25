@@ -1,9 +1,11 @@
-const AWS = require("aws-sdk");
-const dynamo = new AWS.DynamoDB.DocumentClient({
+var AWS = require("aws-sdk");
+var dynamo = new AWS.DynamoDB.DocumentClient({
     region: "ap-northeast-1"
 });
-const tableName = "transactions";
-/* 個人のトランザクションをすべて取得 */
+var tableName = "transactions";
+
+/* tx全件取得 */
+
 exports.handler = (event, context, callback) => {
     var response = {
         statusCode : 200,
@@ -13,50 +15,60 @@ exports.handler = (event, context, callback) => {
         body: JSON.stringify({"message" : ""})
     };
 
-    //var txhash = event.queryStringParameters.txhash;
-    var FromAddress = event.queryStringParameters.FromAddress;
+    var From_Address = event.queryStringParameters.FromAddress;
     //var ToAddress = event.queryStringParameters.ToAddress;
-
-    console.log(FromAddress);
-    if(ToAddress){
-        console.log(ToAddress);
-    }
-    
-
+    console.log("Fromアドレス" + From_Address);
     var param = {
         "TableName" : tableName,
         //キー、インデックスによる検索の定義
-        KeyConditionExpression: "fromAddress = :from",
+        
         //FilterExpression: "#to = to"
         //"KeyConditionExpression": "FromAddress = :from",  //パーティションキー
         //検索値のプレースホルダの定義
-        ExpressionAttributeNames:{
-            ':from': FromAddress
+        /*ExpressionAttributeNames:{
+            "#from": "FromAddress"
             //'#to': 'to'
         },
-        "ExpressionAttributeValues" : {
-            ":from": FromAddress
+        ExpressionAttributeValues : {
+            ":from": {S: From_Address}
             //":to": ToAddress
         },
+
+        KeyConditionExpression: "#from = :from"*/
         
     };
 
-    dynamo.query(param, function(err, data){
+    dynamo.scan(param, function(err, data){
         if(err){
-            
             response.statusCode = 500;
             response.body = JSON.stringify({
                 "message": "予期せぬエラーが発生したちょん"
             });
-            console.log("えらー = " + err);
+            console.log("エラー = " + err);
             callback(null, response);
             return;
-        }else{
-            console.log(data.Item.txhash);
-            console.log(data.Item.FromAddress);
         }
 
-        response.body = JSON.stringify(data);
+        if(data.Items){
+            data.Items.forEach(function(val){
+                if(val.FromAddress != From_Address){
+                    delete val.FromAddress;
+                    delete val.TimeStamp;
+                    delete val.Reason;
+                    delete val.txhash;
+                    delete val.ToAddress;
+                    delete val.ToName;
+                    delete val.Amount;
+                    delete val.FromName;
+                }
+                
+            });
+        }
+
+        response.body = JSON.stringify({
+            "transactions": data.Items
+        });
+        console.log(data.Items);
         callback(null, response);
     });
 };

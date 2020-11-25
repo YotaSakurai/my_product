@@ -21,8 +21,11 @@
         <div class="ui segments">
             <div class="ui segment" v-for="item in items">
                 <div v-if="item.FromAddress">
-                <i class="user icon">{{ item.FromName }}({{ item.FromAddress }})</i>
-                <i>送金理由{{ item.Reason }}</i>
+                <i class="user icon">{{ item.FromName }}</i>
+                <p>({{ item.FromAddress }})</p>
+                <p>↓ {{ item.Amount }}EVT</p>
+                <i class="user icon">{{ item.ToName }}</i>
+                <p>({{ item.ToAddress }})</p>
                 </div>
 
                 <a class="ui fluid card" href="#">
@@ -30,8 +33,34 @@
                         <h4 class="ui header">
                             <i class="inverted red announcement icon"></i>
                             <div class="content">
-                                <div class="header">おしらせ</div>
-                                <div class="sub header">運営からの重要なおしらせ</div>
+                                <div class="header">送金理由</div>
+                                <div class="sub header">{{ item.Reason }}</div>
+                            </div>
+                        </h4>
+                    </div>
+                </a>
+                
+                
+            </div>
+        </div>
+        <div>-------------------</div>
+        <div class="ui segments">
+            <div class="ui segment" v-for="receive in receives">
+                <div v-if="receive.ToAddress">
+                <i class="user icon">{{ receive.ToName }}</i>
+                <p>({{ receive.ToAddress }})</p>
+                <p>↓ {{ receive.Amount }}EVT</p>
+                <i class="user icon">{{ receive.FromName }}</i>
+                <p>({{ receive.FromAddress }})</p>
+                </div>
+
+                <a class="ui fluid card" href="#">
+                    <div class="content">
+                        <h4 class="ui header">
+                            <i class="inverted red announcement icon"></i>
+                            <div class="content">
+                                <div class="header">送金理由</div>
+                                <div class="sub header">{{ receive.Reason }}</div>
                             </div>
                         </h4>
                     </div>
@@ -546,7 +575,8 @@
 		fromName:"",						// 送り主の名前
         beforeAccount:"",				// account保存
         txGetFlag: 0,                    //get実行用フラグ
-        items:[]
+        items:[],                       //送信側のトランザクション
+        receives:[]                     //受け取り側のトランザクション
         },
         
         methods: {
@@ -564,49 +594,10 @@
                     this.beforeAccount = this.defaultAccount;
                     console.log(this.defaultAccount);
                     console.log(this.beforeAccount);
-                    fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
+                    /*fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
                         "?FromAddress=" + this.defaultAccount, {
                             method: "GET"
                         })
-                            .then(function (response) {
-                                if (response.status == 200) {
-                                    console.log(response);
-                                    console.log("txGetレスポンス=200");
-                                    return response.json();
-                                }
-                                // 200番以外のレスポンスはエラーを投げる
-                                return response.json().then(function (json) {
-                                    console.log("200番以外のエラー")
-                                    throw new Error(json.message);
-                                });
-                            })
-                            .then(function(json){
-                                console.log("jsonの中身");
-                                vm.items = json.transactions;
-                                console.log(vm.items);
-                                console.log(json);
-                                console.log(json.transactions[1]);
-                                console.log(json.transactions[1].Reason);
-                            })
-                            .catch(function (err) {
-                                // レスポンスがエラーで返ってきたときの処理はここに記述する
-                                console.log("エラーが発生しました");
-                                console.log(err);
-
-                            });
-                        }
-
-                return (balance / 1e18).toFixed(2);
-            },
-            //txcreate apiを叩くメソッド
-            txGet: function (defaultAccount) {
-                var $this = this;
-                //if(defaultAccount){
-                    console.log("In txGet, start fetch");
-                    fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
-                    "?FromAddress=" + user_account, {
-                        method: "GET"
-                    })
                         .then(function (response) {
                             if (response.status == 200) {
                                 console.log(response);
@@ -621,8 +612,91 @@
                         })
                         .then(function(json){
                             console.log("jsonの中身");
+                            vm.items = json.transactions;
+                            console.log(vm.items);
                             console.log(json);
-                            console.log(json.transactions[1]);
+                            console.log(json.transactions);
+                            console.log(json.transactions[1].Reason);
+                        })
+                        .catch(function (err) {
+                            // レスポンスがエラーで返ってきたときの処理はここに記述する
+                            console.log("エラーが発生しました");
+                            console.log(err);
+
+                        });*/
+                    this.txGet(this.defaultAccount);
+                    this.txGetReceive(this.defaultAccount);
+                }
+                
+
+                return (balance / 1e18).toFixed(2);
+            },
+            //txcreate apiを叩くメソッド
+            txGet: function (defaultAccount) {
+                //if(defaultAccount){
+                    console.log("In txGet, start fetch");
+                    fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
+                        "?FromAddress=" + defaultAccount, {
+                            method: "GET"
+                        })
+                        .then(function (response) {
+                            if (response.status == 200) {
+                                console.log(response);
+                                console.log("txGetレスポンス=200");
+                                return response.json();
+                            }
+                            // 200番以外のレスポンスはエラーを投げる
+                            return response.json().then(function (json) {
+                                console.log("200番以外のエラー")
+                                throw new Error(json.message);
+                            });
+                        })
+                        .then(function(json){
+                            console.log("jsonの中身");
+                            console.log("defaultaccount=" + defaultAccount);
+                            vm.items = json.transactions;
+                            console.log(vm.items);
+                            console.log(json);
+                            console.log(json.transactions);
+                            console.log(json.transactions[1].Reason);
+                        })
+                        .catch(function (err) {
+                            // レスポンスがエラーで返ってきたときの処理はここに記述する
+                            console.log("エラーが発生しました");
+                            console.log(err);
+
+                        });
+                    console.log("finish fetch and txGet");
+                //}
+                //location.reload();					
+            },
+
+            txGetReceive: function(defaultAccount){
+                //if(defaultAccount){
+                    console.log("In txGetReceive, start fetch");
+                    fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/txreceive" + 
+                    "?ToAddress=" + defaultAccount, {
+                        method: "GET"
+                    })
+                        .then(function (response) {
+                            if (response.status == 200) {
+                                console.log(response);
+                                console.log("txGetReceiveレスポンス=200");
+                                return response.json();
+                            }
+                            // 200番以外のレスポンスはエラーを投げる
+                            return response.json().then(function (json) {
+                                console.log("200番以外のエラー")
+                                throw new Error(json.message);
+                            });
+                        })
+                        .then(function(json){
+                            console.log("jsonの中身");
+                            console.log("defaultaccount=" + defaultAccount);
+                            vm.receives = json.transactions;
+                            console.log(vm.receives);
+                            console.log(json);
+                            console.log(json.transactions);
                             console.log(json.transactions[1].Reason);
                         })
                         .catch(function (err) {
@@ -631,12 +705,10 @@
                             console.log(err);
 
                         });	
-                    console.log("finish fetch and txCreate")
-                //}
-                //location.reload();					
+                    console.log("finish fetch and txGetReceive");
             },
 
-            exeFTE: function(){
+            /*exeFTE: function(){
                 var set_interval_id = setInterval(this.findTargetElement, 3000);
                 this.findTargetElement();
             },
@@ -653,7 +725,7 @@
                     this.txGet(this.defaultAccount);
 					
 				}
-            },
+            },*/
             
             /*created: function(){
                 console.log("created function");

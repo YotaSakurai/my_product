@@ -15,18 +15,20 @@ exports.handler = (event, context, callback) => {
 
     var body = JSON.parse(event.body);
     var timeStamp = Date.now();
+    var FromAddress = body.FromAddress.toLowerCase();
+    var ToAddress = body.ToAddress.toLowerCase();
 
     //TODO: DBに登録するための情報をparamオブジェクトとして宣言する（中身を記述）
     var param = {
         "TableName":tableName,
         "Item":{
             "txhash":body.txhash,
-            "FromAddress":body.FromAddress,
+            "FromAddress":FromAddress,
             "FromName":body.FromName,
             "Reason":body.Reason,
             "Amount":body.Amount,
             "TimeStamp":timeStamp,
-            "ToAddress":body.ToAddress,
+            "ToAddress":ToAddress,
             "ToName":body.ToName
         }
     };
