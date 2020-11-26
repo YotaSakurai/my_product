@@ -4,13 +4,21 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>
+	<script src="https://unpkg.com/vue-select@latest"></script>
+	<link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
 	<meta charset="UTF-8">
 	<title>Token Wallet</title>
 </head>
 <body>
 <common-menu></common-menu>
   <div id="js-app">
-    <h1>{{ name }} Wallet</h1>
+	<div class="ui secondary pointing green inverted massive menu">
+      <a class="ui item" href="./index2.html">送金</a>
+      <a class="ui item" href="./transactions.html">Tx一覧</a>
+      <a class="ui item" href="./user.html">マイページ</a>
+    </div>
+	<h1>{{ name }} Wallet</h1>
+	<h2>送金</h2>
     <p>あなたのアドレス: {{ defaultAccount }}</p>
     <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
     <p>
