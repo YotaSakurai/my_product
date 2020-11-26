@@ -10,3 +10,6 @@ tx-get:scanで全件取得してフロント側でFromAddressでフィルター 
 fin:
 txs-get
 tx-create
+
+EVT配布量：1人450EVT, 
+ETH:1人 0.05ETH

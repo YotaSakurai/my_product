@@ -28,14 +28,13 @@
 	<p>
 		宛名: <br />
 		<input v-model="toName" type="text">
-	 </p>
+	</p>
     <p>
       送る量: <br />
 	  <input v-model="amount" type="number" />
-	  <p>{{ amount }}</p>
 	</p>
 	<p>
-		送る理由:
+		送る理由: <br /> 
 		<input  v-model="reason" type="text">
 		<p>{{ reason }}</p>
 	</p>
@@ -51,8 +50,8 @@
 	</a><br>
 	<div>利用者一覧</div>
 	<div class="ui segment" v-for="item in items">
-			<i class="user icon">{{ item.name }}</i>
-			<p>({{ item.address }})</p>
+			<p>{{ item.name }}</p>
+			<p>{{ item.Address }}</p>
 	</div>
 </p>
   </div>

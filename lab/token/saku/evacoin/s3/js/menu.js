@@ -12,7 +12,6 @@ Vue.component('common-menu', {
     
     template: `
     <div class="ui secondary pointing green inverted massive menu">
-        <span class="item menu_toggle_button" v-on:click='topMenu_toggleMode'>メニュー</span>
       <a class="item menu_toggleTab " href="../index2.html" v-bind:class="{active: current=='home',invisible: menu_toggle}">送金</a>
       <a class="item menu_toggleTab " href="../transactions.html" v-bind:class="{active: current=='mode_choice',invisible: menu_toggle}">Tx一覧</a>
       <a class="item menu_toggleTab " href="./user.html" v-bind:class="{active: current=='record',invisible: menu_toggle}">マイページ</a>
