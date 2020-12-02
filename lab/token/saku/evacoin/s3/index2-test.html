@@ -10,51 +10,53 @@
 	<title>Token Wallet</title>
 </head>
 <body>
-  <div id="js-app">
-	<t-common-menu></t-common-menu>
-	<div class="ui secondary pointing green inverted massive menu">
-      <a class="ui item" href="./index2-test.html">送金</a>
-      <a class="ui item" href="./transactions-test.html">Tx一覧</a>
-      <a class="ui item" href="./user2-test.html">マイページ</a>
-    </div>
-	<h1>{{ name }} Wallet</h1>
-	<h2>送金</h2>
-    <p>あなたのアドレス: {{ defaultAccount }}</p>
-    <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
-    <p>
-       送金先: <br />
-       <input v-model="toAddress" type="text" />
-	</p>
-	<p>
-		宛名: <br />
-		<input v-model="toName" type="text">
-	</p>
-    <p>
-      送る量: <br />
-	  <input v-model="amount" type="number" />
-	</p>
-	<p>
-		送る理由: <br /> 
-		<input  v-model="reason" type="text">
-		<p>{{ reason }}</p>
-	</p>
-	<p>
-		あなたの名前またはニックネーム: <br />
-		<input v-model="fromName" type="text">
-	</p>
-    <p>
-      <button @click="send">送金</button>
-	</p>
-    <p v-if="history">
-    今回のトランザクション: <a :href="'https://ropsten.etherscan.io/tx/' + history">{{ history }}
-	</a><br>
-	<div>利用者一覧</div>
-	<div class="ui segment" v-for="item in items">
-			<p>{{ item.name }}</p>
-			<p>{{ item.Address }}</p>
-	</div>
-</p>
-  </div>
+	<div id="js-app">
+		<div class="ui centered">
+			<t-common-menu></t-common-menu>
+			<div class="ui secondary pointing green inverted massive menu">
+			<a class="ui item" href="./index2-test.html">送金</a>
+			<a class="ui item" href="./transactions-test.html">Tx一覧</a>
+			<a class="ui item" href="./user2-test.html">マイページ</a>
+			</div>
+			<h1>{{ name }} Wallet</h1>
+			<h2>送金</h2>
+			<p>あなたのアドレス: {{ defaultAccount }}</p>
+			<p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
+			<p>
+			送金先のアドレス: <br />
+			<input v-model="toAddress" type="text" />
+			</p>
+			<p>
+				相手の名前: <br />
+				<input v-model="toName" type="text">
+			</p>
+			<p>
+			送る量: <br />
+			<input v-model="amount" type="number" />
+			</p>
+			<p>
+				送る理由: <br /> 
+				<input  v-model="reason" type="text">
+				<p>{{ reason }}</p>
+			</p>
+			<p>
+				あなたの名前またはニックネーム: <br />
+				<input v-model="fromName" type="text">
+			</p>
+			<p>
+			<button @click="send">送金</button>
+			</p>
+			<p v-if="history">
+			今回のトランザクション: <a :href="'https://ropsten.etherscan.io/tx/' + history">{{ history }}
+			</a><br>
+			<div>利用者一覧</div>
+			<div class="ui segment" v-for="item in items">
+					<p>{{ item.name }}</p>
+					<p>{{ item.Address }}</p>
+			</div>
+			</p>
+		</div>
+  	</div>
 
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   

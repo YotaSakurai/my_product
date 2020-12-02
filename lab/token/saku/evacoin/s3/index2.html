@@ -555,21 +555,6 @@
 			},
 			//txcreate apiを叩くメソッド
 			txCreate: function (reason, amount, fromAddress, fromName, toAddress, toName, txhash) {
-				//const axios = require('axios');
-				/*axios.post('https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction',{
-				"txhash":txhash,
-				"FromAddress":fromAddress,
-				"FromName":fromName,
-				"Reason":reason,
-				"Amount":amount,
-				"ToAddress":toAddress,
-				"ToName":toName
-				})
-				.then(function(reponse){
-					console.log(respons.data);
-				})
-					
-				}*/
 				console.log("In txCreate, start fetch");
 				fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
 					method: "POST",

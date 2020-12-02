@@ -1,3 +1,9 @@
+.item div{
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
 ul{
     margin: 0;
     padding: 0;
