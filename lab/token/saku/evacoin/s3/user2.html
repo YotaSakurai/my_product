@@ -1,386 +1,439 @@
-<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Token Wallet</title>
+    <meta charset="UTF-8">
+    <!----  semantic ui読み込み ----->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>
+    <title>マイページ</title>
+    <link rel="stylesheet" href="./common/style.css">
 </head>
 <body>
-
-  <div id="js-app">
+<common-menu></common-menu>
+<div id="js-app">
+    <div class="ui secondary pointing green inverted massive menu">
+        <a class="ui item" href="./index2.html">送金</a>
+        <a class="ui item" href="./transactions.html">Tx一覧</a>
+        <a class="ui item" href="./user.html">マイページ</a>
+      </div>
     <h1>{{ name }} Wallet</h1>
-    <p>あなたのアドレス: {{ defaultAccount }}</p>
-    <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
-    <p>
-       送金先: <br />
-       <input v-model="toAddress" type="text" />
-	</p>
-	<p>
-		宛名: <br />
-		<input v-model="toName" type="text">
-	 </p>
-    <p>
-      送る量: <br />
-	  <input v-model="amount" type="number" />
-	  <p>{{ amount }}</p>
-	</p>
-	<p>
-		送る理由:
-		<input  v-model="reason" type="text">
-		<p>{{ reason }}</p>
-	</p>
-	<p>
-		あなたの名前またはニックネーム: <br />
-		<input v-model="fromName" type="text">
-	</p>
-    <p>
-      <button @click="send">送金</button>
-	</p>
-	<p>
-		Transaction(hard): <a href="https://ropsten.etherscan.io/tx/0xfbf031925f512c4a9593b7f19080d9b91caf9e5443a2c020ad1b84a1f3e55a09">トランザクション</a>
-	</p>
-    <p v-model="history">
-    Transaction history: <a :href="'https://ropsten.etherscan.io/tx/' + history">{{ history }}
-    </a>
-</p>
-  </div>
+    <h2>あなたの送受信履歴</h2>
+        <p>あなたのアドレス: {{ defaultAccount }}</p>
+        <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
+    
+        <div>過去のトランザクション</div><br>
+        <div class="vue">
+            <ul class="tabs">
+                <li @click="change('1')" v-bind:class="{'active': isActive === '1'}">送金履歴</li>
+                <li @click="change('2')" v-bind:class="{'active': isActive === '2'}">受信履歴</li>
+            </ul>
+            <ul class="ui text container">
+                <li v-if="isActive === '1'">
+                    <div class="ui fluid segments">
+                        <div v-for="item in items">
+                            <div class="ui fluid segment" v-if="item.FromAddress">
+                                <p>{{ convert(item.TimeStamp) }}</p>
+                                <i class="user icon"></i>
+                                <p>{{ item.FromName }}</p>
+                                <p>({{ item.FromAddress }})</p>
+                                <p>↓ {{ item.Amount }}EVT</p>
+                                <i class="user icon"></i>
+                                <p>{{ item.ToName }}</p>
+                                <p>({{ item.ToAddress }})</p>
+                                <a class="ui text card" href="#">
+                                    <div class="content">
+                                        <h4 class="ui header">
+                                            <i class="inverted red announcement icon"></i>
+                                            <div class="content">
+                                                <div class="sub header">送金理由</div>
+                                                <div class="header">{{ item.Reason }}</div>                                                
+                                            </div>
+                                        </h4>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li v-else-if="isActive === '2'">
+                    <div class="ui fluid segments">
+                        <div v-for="receive in receives">
+                            <div class="ui fluid segment" v-if="receive.ToAddress">
+                                <p>{{ convert(receive.TimeStamp) }}</p>
+                                <i class="user icon"></i>
+                                <p>{{ receive.FromName }}</p>
+                                <p>({{ receive.FromAddress }})</p>
+                                <p>↓ {{ receive.Amount }}EVT</p>
+                                <i class="user icon"></i>
+                                <p>{{ receive.ToName }}</p>
+                                <p>({{ receive.ToAddress }})</p>
+                                <a class="ui text card" href="#">
+                                    <div class="content">
+                                        <h4 class="ui header">
+                                            <i class="inverted red announcement icon"></i>
+                                            <div class="content">
+                                                <div class="sub header">送金理由</div>
+                                                <div class="header">{{ receive.Reason }}</div>                                                
+                                            </div>
+                                        </h4>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        
+        </div>
+</div>
+    
 
-  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-  
-  
-  <script>
-	  var contractAddress = "0xD2fED57102Ee9d68cec41613985Cd8ed737BD748";
-    var abiArray = [
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Approval",
-		"type": "event"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "subtractedValue",
-				"type": "uint256"
-			}
-		],
-		"name": "decreaseAllowance",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "addedValue",
-				"type": "uint256"
-			}
-		],
-		"name": "increaseAllowance",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "transfer",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Transfer",
-		"type": "event"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "transferFrom",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			}
-		],
-		"name": "allowance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "decimals",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "initialSupply",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "name",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "symbol",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "totalSupply",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	}];
-  </script>
 
-  
-  <script>
-// web3関連のコード
+<script>
+    /*var AWS = require('aws-sdk');
+    aws.config.region = 'ap-northeast-1';
+    var s3 = new AWS.S3();
+    var params = {
+        Bucket: 'sakulabbc.com',
+        Key: 'js/abi.js'
+    };*/
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<script>
+    var contractAddress = "0xD2fED57102Ee9d68cec41613985Cd8ed737BD748";
+  var abiArray = [
+  {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+          },
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+          }
+      ],
+      "name": "Approval",
+      "type": "event"
+  },
+  {
+      "constant": false,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+          }
+      ],
+      "name": "approve",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "constant": false,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "subtractedValue",
+              "type": "uint256"
+          }
+      ],
+      "name": "decreaseAllowance",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "constant": false,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "addedValue",
+              "type": "uint256"
+          }
+      ],
+      "name": "increaseAllowance",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "constant": false,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+          }
+      ],
+      "name": "transfer",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+          },
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+          }
+      ],
+      "name": "Transfer",
+      "type": "event"
+  },
+  {
+      "constant": false,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+          },
+          {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+          }
+      ],
+      "name": "transferFrom",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+          },
+          {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+          }
+      ],
+      "name": "allowance",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+          }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [],
+      "name": "decimals",
+      "outputs": [
+          {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [],
+      "name": "initialSupply",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+          {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+          {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "constant": true,
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  }];
+</script>
+
+<script>
+    var user_account;   //global
+        // web3関連のコード
     window.addEventListener('load', function() {    //http://lotz84.hatenablog.com/entry/2017/12/13/081920
         console.log('loading page');
         if (typeof web3 !== 'undefined') {
             window.web3 = new Web3(web3.currentProvider);
-			console.log('Web3: '+ web3.currentProvider.constructor.name);
-			web3 = new Web3(window.ethereum)		//https://stackoverflow.com/questions/56720654/how-to-get-an-account-address-from-metamask
-			console.log(web3);
-			window.ethereum.enable().catch(error => {
-				// User denied account access
-				console.log(error);
-			});
-
-			console.log("defaultAccount = %s", web3.eth.defaultAccount);
+            console.log('Web3: '+ web3.currentProvider.constructor.name);
+            web3 = new Web3(window.ethereum)		//https://stackoverflow.com/questions/56720654/how-to-get-an-account-address-from-metamask
+            console.log(web3);
+            window.ethereum.enable().catch(error => {
+                // User denied account access
+                console.log(error);
+            });
+            console.log("defaultAccount = %s", web3.eth.defaultAccount);
             onlyRopstenTestNetwork(main);
             console.log('finished checking network');
         } else {
@@ -410,14 +463,14 @@
         web3.eth.getAccounts(function(error, accounts) {
             console.log('start getAccounts function');
             if (error) return;
-            let user_account = accounts[0];
-            console.log("user_accuount[0]:".user_account);
+            user_account = accounts[0]; //グローバル変数にする
+            console.log("user_account[0]:"+ user_account);
             if(typeof user_account !== 'undefined'){
                 console.log("user account not undefined");
                 console.log("------------");
-                console.log("accounts=".accounts);
+                console.log("accounts=" + user_account);
                 let Balance = getBalance(user_account);
-                console.log("Balance:".Balance);
+                console.log("Balance:" + Balance);
             }else{
                 console.log("ログインして下さい");
             }
@@ -443,6 +496,7 @@
         startApp();
 
         console.log('end of main function');
+        console.log(user_account);
 	}
 	 
 	//アドレスのETH量を取得
@@ -455,10 +509,10 @@
                 });
         console.log('end of getBalance function');
     }
+        
     
-
     function initializeApp(defaultAccount, contract, name, symbol, balance) {
-    new Vue({
+    var vm = new Vue({
         el: '#js-app',
         data: {
         defaultAccount: defaultAccount, // 選択されているEhtereumアカウント
@@ -470,94 +524,172 @@
 		history: "",                    // 送金トランザクションのハッシュ
 		reason:"",						// 送金理由
 		toName:"",						// 送信先の相手の名前
-		fromName:"",						// 送り主の名前
-		beforeHistory:""				// 1個前のトランザクション
+		fromName:"",					// 送り主の名前
+        beforeAccount:"",				// account保存
+        txGetFlag: 0,                   //get実行用フラグ
+        items:[],                       //送信側のトランザクション
+        receives:[],                    //受け取り側のトランザクション
+        totalReceive:"",                //総受信量
+        totalSend:"",                   //総送信量
+        mode:"send",                    //履歴表示の切り替え
+        isActive: '1'
         },
+        
         methods: {
-        // 残高の表示を整形するメソッド
-			showBalance: function(balance) {
-				return (balance / 1e18).toFixed(2);
-			},
-			// 送金するメソッド
-			send: function() {
-				var $this = this;
-				var sendAmount = this.amount * 1e18;
-				var set_interval_id = setInterval(this.findTargetElement, 3000);	//txhashが発行されるまでのインターバル設定
+            /*window:onload = function(){
+                var $this = this;
+                
+                console.log("windows:onload");
+                exeFTE();
+            },*/
+            // 残高の表示を整形するメソッド
+            showBalance: function(balance) {
+                var $this = this;
+                //defaultAccountのtransactionをget
+                if(this.defaultAccount != this.beforeAccount){
+                    this.beforeAccount = this.defaultAccount;
+                    console.log(this.defaultAccount);
+                    console.log(this.beforeAccount);
+                    /*fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
+                        "?FromAddress=" + this.defaultAccount, {
+                            method: "GET"
+                        })
+                        .then(function (response) {
+                            if (response.status == 200) {
+                                console.log(response);
+                                console.log("txGetレスポンス=200");
+                                return response.json();
+                            }
+                            // 200番以外のレスポンスはエラーを投げる
+                            return response.json().then(function (json) {
+                                console.log("200番以外のエラー")
+                                throw new Error(json.message);
+                            });
+                        })
+                        .then(function(json){
+                            console.log("jsonの中身");
+                            vm.items = json.transactions;
+                            console.log(vm.items);
+                            console.log(json);
+                            console.log(json.transactions);
+                            console.log(json.transactions[1].Reason);
+                        })
+                        .catch(function (err) {
+                            // レスポンスがエラーで返ってきたときの処理はここに記述する
+                            console.log("エラーが発生しました");
+                            console.log(err);
 
-				contract.transfer(this.toAddress, sendAmount, {from: defaultAccount}, function(err, txhash){
-				if (err) throw err;
-				$this.history = txhash;
-				console.log(txhash);
-				contract.balanceOf(defaultAccount, function(err, balance){
-					$this.balance = balance;
-				});
-				});
-				console.log("this.reason:%s", this.reason);
-				console.log("this.sendAmount:%s", this.sendAmount);
-				console.log("this.amount:%s", this.amount);
-				console.log("defaultAccount:%s", this.defaultAccount);
-				console.log("this.fromName:%s", this.fromName);
-				console.log("this.toAddress:%s", this.toAddress);
-				console.log("this.toName:%s", this.toName);
-				console.log("this.history:%s", this.history);
-				//this.txCreate(this.reason, sendAmount, defaultAccount, this.fromName, this.toAddress, this.toName, this.history);
-				this.findTargetElement();
-			},
-			//txcreate apiを叩くメソッド
-			txCreate: function (reason, amount, fromAddress, fromName, toAddress, toName, txhash) {
-				
-				console.log("In txCreate, start fetch");
-				fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
-					method: "POST",
-					body: JSON.stringify({
-						"txhash":txhash,
-						"FromAddress":fromAddress,
-						"FromName":fromName,
-						"Reason":reason,
-						"Amount":amount,
-						"ToAddress":toAddress,
-						"ToName":toName
-					})
-				})
-					.then(function (response) {
-						if (response.status == 200) {
-							console.log(response);
-							return response.json();
-						}
-						// 200番以外のレスポンスはエラーを投げる
-						return response.json().then(function (json) {
-							throw new Error(json.message);
-						});
-					})
-					.catch(function (err) {
-						// レスポンスがエラーで返ってきたときの処理はここに記述する
-						console.log("エラーが発生しました");
+                        });*/
+                    this.txGet(this.defaultAccount);
+                    this.txGetReceive(this.defaultAccount);
+                }
+                
 
-					});	
-				console.log("finish fetch and txCreate")					
-			},
-			// txhashが発行されるまでの待ち用の関数
-			findTargetElement: function(){
-				var $this = this;			
+                return (balance / 1e18).toFixed(2);
+            },
+            //txcreate apiを叩くメソッド
+            txGet: function (defaultAccount) {
+                var $this = this;
+                //if(defaultAccount){
+                    console.log("In txGet, start fetch");
+                    fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction" + 
+                        "?FromAddress=" + defaultAccount, {
+                            method: "GET"
+                        })
+                        .then(function (response) {
+                            if (response.status == 200) {
+                                console.log(response);
+                                console.log("txGetレスポンス=200");
+                                return response.json();
+                            }
+                            // 200番以外のレスポンスはエラーを投げる
+                            return response.json().then(function (json) {
+                                console.log("200番以外のエラー")
+                                throw new Error(json.message);
+                            });
+                        })
+                        .then(function(json){   //json形式じゃない？Object形式
+                            //var arrayList1 = Object.entries(json).map(([key, value]) => ({[key]: value}));
+                            //console.log(arrayList1);
+                            console.log("jsonの中身");
+                            console.log("defaultaccount=" + defaultAccount);
+                            vm.items = json.transactions;
+                            console.log(vm.items);
+                            console.log("送金額" + vm.items[1].Amount);
+                            console.log(json);
+                            console.log(json.transactions[1]);
+                            console.log(json.transactions[1].Reason);
+                        })
+                        .catch(function (err) {
+                            // レスポンスがエラーで返ってきたときの処理はここに記述する
+                            console.log("エラーが発生しました");
+                            console.log(err);
 
-				if(this.history){
-					if(this.history != this.beforeHistory){
-						clearInterval(this.set_interval_id);
-						console.log("finish cleared clearInterval")
-						this.beforeHistory = this.history;
-						this.txCreate(this.reason, this.amount, this.defaultAccount, this.fromName, this.toAddress, this.toName, this.history);					
-					}
-					
-				}
-			}
-		}
+                        });
+                    console.log("finish fetch and txGet");
+                //}
+                //location.reload();					
+            },
+
+            txGetReceive: function(defaultAccount){
+                var $this = this;
+                //if(defaultAccount){
+                    console.log("In txGetReceive, start fetch");
+                    fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/txreceive" + 
+                    "?ToAddress=" + defaultAccount, {
+                        method: "GET"
+                    })
+                        .then(function (response) {
+                            if (response.status == 200) {
+                                console.log(response);
+                                console.log("txGetReceiveレスポンス=200");
+                                return response.json();
+                            }
+                            // 200番以外のレスポンスはエラーを投げる
+                            return response.json().then(function (json) {
+                                console.log("200番以外のエラー")
+                                throw new Error(json.message);
+                            });
+                        })
+                        .then(function(json){
+                            console.log("jsonの中身");
+                            console.log("defaultaccount=" + defaultAccount);
+                            vm.receives = json.transactions;
+                            console.log(vm.receives);
+                            console.log(json);
+                            console.log(json.transactions);
+                            console.log(json.transactions[1].Reason);
+                        })
+                        .catch(function (err) {
+                            // レスポンスがエラーで返ってきたときの処理はここに記述する
+                            console.log("エラーが発生しました");
+                            console.log(err);
+
+                        });	
+                    console.log("finish fetch and txGetReceive");
+            },
+
+            convert: function(timestamp){
+				var date = new Date(timestamp).toLocaleDateString()+ " " + new Date(timestamp).toLocaleTimeString();
+                return date;
+            },
+
+            switch: function(tab){
+                var $this = this;
+                this.mode = tab;
+            },
+
+            change: function(num){
+                this.isActive = num
+            }
+        }
     })
     console.log('end initializeApp function');
     }
-    //送金後にtx-createのapiを叩く
     console.log("end of script");
-
-  </script>
-  
+    
+</script>
+      
+<script src="./js/menu.js" charset="utf-8"></script>
 </body>
 </html>

@@ -4,6 +4,13 @@ align-items: center;
 justify-content: center;
 }
 
+.copy-value {
+  cursor: pointer;
+}
+.copy-value:hover {
+  background: #f2fafc;
+}
+
 ul{
     margin: 0;
     padding: 0;

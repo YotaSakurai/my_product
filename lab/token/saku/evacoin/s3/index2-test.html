@@ -5,6 +5,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>
 	<script src="https://unpkg.com/vue-select@latest"></script>
+	<script src="https://unpkg.com/clipboard@2/dist/clipboard.min.js"></script>
 	<link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
 	<meta charset="UTF-8">
 	<title>Token Wallet</title>
@@ -52,7 +53,7 @@
 			<div>利用者一覧</div>
 			<div class="ui segment" v-for="item in items">
 					<p>{{ item.name }}</p>
-					<p>{{ item.Address }}</p>
+					<p class="copy-value" data-clipboard-text="{{ item.Address }}">{{ item.Address }}</p>
 			</div>
 			</p>
 		</div>
@@ -379,6 +380,8 @@
 	}];
   </script>
 
+  <script>new ClipboardJS('.copy-value');	//クリックでコピーを有効化</script>
+  
   <!--<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
@@ -487,20 +490,22 @@
 		toName:"",						// 送信先の相手の名前
 		fromName:"",						// 送り主の名前
 		beforeHistory:"",				// 1個前のトランザクション
-		items:[]
+		items:[],
+		selectedName: "",				//選択されたアドレス
+		optionAddress: []				//プルダウンで選択用のアドレスと名前のリスト
 		},
 		
 		created: function(){
 			var $this = this;
 			console.log("スタート fetch");
-			fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/test/user", 
+			fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/user", 
 			{
 					method: "GET"
 				})
 					.then(function (response) {
 						if (response.status == 200) {
 							console.log(response);
-							console.log("user-get2レスポンス=200");
+							console.log("users-getレスポンス=200");
 							return response.json();
 						}
 						// 200番以外のレスポンスはエラーを投げる
@@ -513,8 +518,10 @@
 						console.log("jsonの中身");
 						vm.items = json.users;
 						console.log(json);
+						console.log(this.items);
+						//console.log(vm.items);
 						console.log(json.users[1]);
-						//console.log(json.users[1].Reason);
+						console.log(json.users[1].Reason);
 					})
 					.catch(function (err) {
 						// レスポンスがエラーで返ってきたときの処理はここに記述する
@@ -557,21 +564,6 @@
 			},
 			//txcreate apiを叩くメソッド
 			txCreate: function (reason, amount, fromAddress, fromName, toAddress, toName, txhash) {
-				//const axios = require('axios');
-				/*axios.post('https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction',{
-				"txhash":txhash,
-				"FromAddress":fromAddress,
-				"FromName":fromName,
-				"Reason":reason,
-				"Amount":amount,
-				"ToAddress":toAddress,
-				"ToName":toName
-				})
-				.then(function(reponse){
-					console.log(respons.data);
-				})
-					
-				}*/
 				console.log("In txCreate, start fetch");
 				fetch("https://ch7s5hybm7.execute-api.ap-northeast-1.amazonaws.com/dev/transaction", {
 					method: "POST",
@@ -588,13 +580,6 @@
 					.then(function (response) {
 						if (response.status == 200) {
 							console.log(response);
-							console.log(fromAddress);
-							console.log(toAddress);
-							localStorage.setItem('FromAddress', fromAddress);
-							localStorage.setItem('FromName', fromName);
-							localStorage.setItem('ToAddress', toAddress);
-							localStorage.setItem('ToName', toName);
-							localStorage.setItem('Amount', amount);
 							return response.json();
 						}
 						// 200番以外のレスポンスはエラーを投げる
@@ -624,8 +609,8 @@
 				}
 			},
 
-			updateTotalReceive: function(){
-
+			addTotalTx: function () {
+				
 			}
 		}
     })
@@ -636,6 +621,7 @@
 
   </script>
   <script src="./js/menu.js" charset="utf-8"></script>
+  <script src="./abi.js" charset="utf-8"></script>
   
 </body>
 </html>

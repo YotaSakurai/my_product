@@ -6,13 +6,13 @@
     <title>tx一覧</title>
 </head>
 <body>
+<common-menu></common-menu>
 <div id="js-app">
-    <t-common-menu></t-common-menu>
 	<div class="ui secondary pointing green inverted massive menu">
 		<a class="ui item" href="./index2.html">送金</a>
 		<a class="ui item" href="./transactions.html">Tx一覧</a>
 		<a class="ui item" href="./user.html">マイページ</a>
-	</div>
+	  </div>
 	<h1>{{ name }} Wallet</h1>
 	<h2>トランザクション一覧</h2>
         <p>あなたのアドレス: {{ defaultAccount }}</p>
@@ -21,11 +21,13 @@
         <div class="ui segments">
             <div class="ui segment" v-for="item in items">
                 <div v-if="item.FromAddress">
-					<p>{{ convert(item.TimeStamp) }}</p>
-					<i class="user icon">{{ item.FromName }}</i>
+                    <p>{{ convert(item.TimeStamp) }}</p>
+                    <i class="user icon"></i>
+					<p>{{ item.FromName }}</p>
 					<p>({{ item.FromAddress }})</p>
-					<p>↓ {{ item.Amount }}EVT</p>
-					<i class="user icon">{{ item.ToName }}</i>
+                    <p>↓ {{ item.Amount }}EVT</p>
+                    <i class="user icon"></i>
+					<p>{{ item.ToName }}</p>
 					<p>({{ item.ToAddress }})</p>
                 </div>
 

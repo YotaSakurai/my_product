@@ -34,10 +34,12 @@
                         <div v-for="item in items">
                             <div class="ui fluid segment" v-if="item.FromAddress">
                                 <p>{{ convert(item.TimeStamp) }}</p>
-                                <i class="user icon">{{ item.FromName }}</i>
+                                <i class="user icon"></i>
+                                <p>{{ item.FromName }}</p>
                                 <p>({{ item.FromAddress }})</p>
                                 <p>↓ {{ item.Amount }}EVT</p>
-                                <i class="user icon">{{ item.ToName }}</i>
+                                <i class="user icon"></i>
+                                <p>{{ item.ToName }}</p>
                                 <p>({{ item.ToAddress }})</p>
                                 <a class="ui text card" href="#">
                                     <div class="content">
@@ -59,10 +61,12 @@
                         <div v-for="receive in receives">
                             <div class="ui fluid segment" v-if="receive.ToAddress">
                                 <p>{{ convert(receive.TimeStamp) }}</p>
-                                <i class="user icon">{{ receive.FromName }}</i>
+                                <i class="user icon"></i>
+                                <p>{{ receive.FromName }}</p>
                                 <p>({{ receive.FromAddress }})</p>
                                 <p>↓ {{ receive.Amount }}EVT</p>
-                                <i class="user icon">{{ receive.ToName }}</i>
+                                <i class="user icon"></i>
+                                <p>{{ receive.ToName }}</p>
                                 <p>({{ receive.ToAddress }})</p>
                                 <a class="ui text card" href="#">
                                     <div class="content">

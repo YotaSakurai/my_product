@@ -22,25 +22,25 @@
     <p>あなたのアドレス: {{ defaultAccount }}</p>
     <p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
     <p>
-       送金先: <br />
+       送金先のアドレス: <br />
        <input v-model="toAddress" type="text" />
 	</p>
 	<p>
-		宛名: <br />
+		送る相手の名前: <br />
 		<input v-model="toName" type="text">
 	</p>
     <p>
       送る量: <br />
-	  <input v-model="amount" type="number" />
+	  <input v-model="amount" type="number" min="0"/>
 	</p>
 	<p>
 		送る理由: <br /> 
-		<input  v-model="reason" type="text">
+		<input  v-model="reason" type="text" size="140">
 		<p>{{ reason }}</p>
 	</p>
 	<p>
-		あなたの名前またはニックネーム: <br />
-		<input v-model="fromName" type="text">
+		あなたの名前: <br />
+		<input v-model="fromName" type="text" >
 	</p>
     <p>
       <button @click="send">送金</button>
@@ -598,6 +598,10 @@
 					}
 					
 				}
+			},
+
+			addTotalTx: function () {
+				
 			}
 		}
     })

@@ -2,7 +2,7 @@ var AWS = require("aws-sdk");
 var dynamo = new AWS.DynamoDB.DocumentClient({
     region: "ap-northeast-1"
 });
-var tableName = "users";                 //DynamoDB
+var tableName = "users-test";                 //DynamoDB
 
 exports.handler = (event, context, callback) => {
     var response = {
