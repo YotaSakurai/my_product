@@ -23,14 +23,26 @@
 			<h2>送金</h2>
 			<p>あなたのアドレス: {{ defaultAccount }}</p>
 			<p>{{ name }}の保有量: {{ showBalance(balance) }} {{ symbol }}</p>
-			<p>
+			<!--<p>
 			送金先のアドレス: <br />
 			<input v-model="toAddress" type="text" />
 			</p>
 			<p>
 				相手の名前: <br />
 				<input v-model="toName" type="text">
-			</p>
+			</p>-->
+
+			<select v-model="toAddress">
+				<option disabled value="">送る相手</option>
+				<option v-for="(item, toName) in items" v-bind:value="item.Address" v-bind:key="item.name">{{ item.name }}</option>
+				<input type="hidden" v-bind="selectedName" value= item.Address>
+				<input type="hidden" v-bind:value="toAddress">
+				<input type="hidden" v-bind:value="toName" value= item.name>
+			</select>
+			<p>selectedName{{ selectedName }}</p>
+			<p>selected address: {{ toAddress }}</p>
+			<p>selected name: {{ toName }}</p>
+
 			<p>
 			送る量: <br />
 			<input v-model="amount" type="number" />
@@ -491,7 +503,7 @@
 		fromName:"",						// 送り主の名前
 		beforeHistory:"",				// 1個前のトランザクション
 		items:[],
-		selectedName: "",				//選択されたアドレス
+		selectedName: "",				//選択された名前
 		optionAddress: []				//プルダウンで選択用のアドレスと名前のリスト
 		},
 		
