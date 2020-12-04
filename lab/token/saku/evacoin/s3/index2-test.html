@@ -34,7 +34,12 @@
 
 			<select v-model="toAddress">
 				<option disabled value="">送る相手</option>
-				<option v-for="(item, toName) in items" v-bind:value="item.Address" v-bind:key="item.name">{{ item.name }}</option>
+				<!--<option v-for="(item, toName) in items" v-bind:value="item.Address" v-bind:key="item.name">{{ item.name }}</option>-->
+				<option 
+					v-for="(item, toName) in items"
+					v-bind:toName="item.name" 
+					v-bind:key="item.name"
+				>{{ item.name }}</option>
 				<input type="hidden" v-bind="selectedName" value= item.Address>
 				<input type="hidden" v-bind:value="toAddress">
 				<input type="hidden" v-bind:value="toName" value= item.name>
@@ -44,8 +49,24 @@
 			<p>selected name: {{ toName }}</p>
 
 			<p>
+			<!--
 			送る量: <br />
-			<input v-model="amount" type="number" />
+			<input v-model="amount" type="number" />量を自由に入力 -->	
+			<!--↓量を固定-->
+			<p>送る量</p>
+			<select v-model="amount">
+				
+				<option>1</option>
+				<option>5</option>
+				<option>10</option>
+				<option>25</option>
+				<option>50</option>
+				<option>100</option>
+				<option>200</option>
+				<option>300</option>
+				<option>400</option>
+				<option>500</option>
+			</select>
 			</p>
 			<p>
 				送る理由: <br /> 
