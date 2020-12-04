@@ -42,11 +42,11 @@
 				>{{ item.name }}</option>
 				<input type="hidden" v-bind="selectedName" value= item.Address>
 				<input type="hidden" v-bind:value="toAddress">
-				<input type="hidden" v-bind:value="toName" value= item.name>
+				<input type="hidden" v-bind:value="toName">
 			</select>
 			<p>selectedName{{ selectedName }}</p>
-			<p>selected address: {{ toAddress }}</p>
-			<p>selected name: {{ toName }}</p>
+			<p>selected toAddress: {{ toAddress }}</p>
+			<p>selected toName: {{ toName }}</p>
 
 			<p>
 			<!--
